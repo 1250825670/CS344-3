@@ -1,191 +1,42 @@
 #!/bin/bash
-
-function cleanup {	#removes temp files if program is killed
-	if [[ -e $$temprow ]]		#checks if row file exists
-	then
-		rm -f $$temprow
-	fi
-	if [[ -e $$tempMedian ]]		#checks if median file exists
-	then
-		rm -f $$tempMedian
-	fi
-	if [[ -e $$tempAverage ]]		#checks if average file exists
-	then
-		rm -f $$tempAverage
-	fi
-	if [[ -e $$datafile ]]		#checks if datafile exists
-	then
-		rm -f $$datafile
-	fi
-	count=0
-	while [[ -e $$tmpcol* ]]	#removes all column files
-	do
-		rm -f $$tmpcol$count
-		count=`expr $count + 1`
-	done
-	exit 1
-}
-
+function cleanup { rm -f $$*; exit 0; }	#removes temp files
 trap cleanup SIGHUP SIGINT SIGTERM	#traps kill command
-
 echoerr() { echo "$@" 1>&2; }	#to print errors to screen
-
-#check if file or stdin
+function err { echoerr "./stats {-rows|-cols} [file]"; rm -f $$*; exit 1; }	#echo out error messages
+printCol(){ echo $1; while read line; do echo -e -n "$line\t"; done < $2; echo -e "\n"; }	#prints column data
+makeTempFiles(){ colCount=1; rowCount=1;
+	while [ "$colCount" -le "$numCols" ]; do awk -v x=$colCount '{print $x}' < $datafilepath >> $$tempcol$colCount; colCount=`expr $colCount + 1`; done	#creates temp files for each column
+	while [ "$rowCount" -le "$numRows" ]; do head -$rowCount $datafilepath | tail -1 | tr "\t" "\n" >> $$temprow$rowCount; rowCount=`expr $rowCount + 1`; done; }	#creates temp files for each row
+findMedSumAvg(){ tmpcnt=1; sum=0;
+	sort -n $1 -o $$tempSorted
+	while read num; do
+		if [[ $tmpcnt == $(( ($2 / 2) + 1 )) ]]; then med=$num; fi	#saves median value
+		tmpcnt=`expr $tmpcnt + 1`; sum=`expr $sum + $num` #adds number to sum total
+	done < $$tempSorted;
+	avg=$(( ($sum + ($2 / 2)) / $2 )); }	#finds average
 datafilepath="$$datafile"
-if [ "$#" = "0" ]	#if nothing is passed in
-then
-	echoerr "./stats {-rows|-cols} [file]"
-	exit 1
-elif [ "$#" = "1" ]		#if it should be read from stdin
-then
-	cat > "$datafilepath"
-elif [ "$#" = "2" ]		#if it should be read from provided file
-then
-	datafilepath=$2
-	if [[ ! -e $datafilepath ]]		#checks if file exists
-	then
-		echoerr "./stats cannot read $datafilepath"
-		exit 1
-	elif [[ ! -r $datafilepath ]]	#checks if file has read permission
-	then
-		echoerr "./stats cannot read $datafilepath"
-		exit 1
-	elif [[ ! -f $datafilepath ]]	#checks if file is a regular file (not directory)
-	then
-		echoerr "./stats cannot read $datafilepath"
-		exit 1
-	fi
-else	#if too many options are provided
-	echoerr "./stats {-rows|-cols} [file]"
-	exit 1
-fi
-
-#make temp files
-tmprow="$$temprow"
-tmpAvg="$$tempAverage"
-tmpMed="$$tempMedian"
-
-#Code to calculate for rows
-if [[ $1 == -r* ]]
-then
-	rowRan="false"
-	while read i #reads all lines
-	do
-		if [[ $rowRan == "false" ]]	#prints headers only on the first run
-		then
-			echo -e "Average\tMedian"
-		fi
-		rowRan="true"
-		sum=0
-		count=0
-		for num in $i
-		do
-			sum=`expr $sum + $num` #adds number to sum total
-			echo "$num" >> $tmprow #saved into temp file for sorting
-			count=`expr $count + 1`
-		done
-		
-		avg=$(( ($sum + ( $count / 2)) / $count ))	#finds average
-		med=`expr $count / 2`	#finds place of median value
-		med=`expr $med + 1`
-		
-		sort -n $tmprow -o $tmprow #sorts temp file
-		
-		tmpcnt=1
-		while read num   #finds median
-		do
-			if [[ $tmpcnt == $med ]]
-			then
-				echo -e "$avg\t$num" #prints results
-			fi
-			tmpcnt=`expr $tmpcnt + 1`
-		done < $tmprow
-		rm -f $tmprow
-	done < $datafilepath
-	if [[ $rowRan == "false" ]]	#checks if it actually ran, if it didn't then the file had nothing to read
-	then
-		echoerr "FILE IS EMPTY"
-		exit 1
-	fi
-
-#calculates column info
-elif [[ $1 == -c* ]]
-then
-	colRan="false"
-	numrows=0
-	while read i  #saves each column to separate temp files and sorts each
-	do
-		colRan="true"
-		numcols=0
-		for num in $i
-		do
-			echo "$num" >> $$tmpcol$numcols
-			sort -n $$tmpcol$numcols -o $$tmpcol$numcols
-			numcols=`expr $numcols + 1`
-		done
-		numrows=`expr $numrows + 1`
-	done < $datafilepath
-	
-	if [[ $colRan == "false" ]]	#checks if it actually ran, if it didn't then the file had nothing to read
-	then
-		echoerr "FILE IS EMPTY"
-		exit 1
-	fi
-	
-	med=`expr $numrows / 2`
-	med=`expr $med + 1`		#finds place of median value
-	
-	count=0
-	while [[ $count < $numcols ]]
-	do
-		sum=0
-		tmpcnt=1
-		while read line
-		do
-			sum=`expr $sum + $line` #sums all values from column
-			if [[ $med == $tmpcnt ]]  #finds median value
-			then
-				#add medians to temp file
-				echo -e $line >> $tmpMed
-			fi
-			tmpcnt=`expr $tmpcnt + 1`
-		done < $$tmpcol$count
-		
-		avg=$(( ($sum + ( $numrows / 2)) / $numrows ))	#finds average
-		
-		#adds averages to temp file
-		echo -e $avg >> $tmpAvg
-		count=`expr $count + 1`
-	done
-	
-	echo "Averages:"
-	while read avg		#prints averages
-	do
-		echo -e -n "$avg\t"
-	done < $tmpAvg
-	
-	echo -e "\nMedians:"
-	while read med		#prints medians
-	do
-		echo -e -n "$med\t"
-	done < $tmpMed
-	echo -e "\n"
-	count=0
-	while [[ $count < $numcols ]] #deletes temp column files
-	do
-		rm -f $$tmpcol$count
-		count=`expr $count + 1`
-	done
-	
-	rm -f $tmpAvg
-	rm -f $tmpMed
-	
-else	#prints error if neither rows nor columns are specified
-	echoerr "./stats {-rows|-cols} [file]"
-	exit 1
-fi
-if [[ -e $$datafile ]]	#removes temp datafile only if it was read from stdin
-then
-	rm -f $$datafile
-fi
-exit 0
+if [ "$#" = "0" ]; then err	#if nothing is passed in
+elif [ "$#" = "1" ]; then cat > "$datafilepath"		#if it should be read from stdin
+elif [ "$#" = "2" ]; then datafilepath=$2		#if it should be read from provided file
+else err; fi	#if too many options are provided
+if [[ ! -e $datafilepath ]] || [[ ! -r $datafilepath ]] || [[ ! -f $datafilepath ]]; then echoerr "./stats cannot read $datafilepath"; rm -f $$*; exit 1;  fi;	#checks that file exists and has read permission
+if [[ `wc -c < $datafilepath | awk '{print $1}'` == 0 ]]; then echoerr "FILE IS EMPTY"; exit 1; fi;	#checks if file is empty
+numCols=`awk '{print NF}' $datafilepath | sort -nu | tail -n 1`; numRows=`wc -l < $datafilepath`
+makeTempFiles; rowCount=1; colCount=1
+if [[ $1 == -r* ]]; then	#Code to calculate for rows
+	echo -e "Average\tMedian"	#print headers
+	while [ "$rowCount" -le "$numRows" ]; do
+		findMedSumAvg $$temprow$rowCount $numCols	#passes temp file and number of columns
+		echo -e "$avg\t$med"	#prints results
+		rowCount=`expr $rowCount + 1`
+	done;
+elif [[ $1 == -c* ]]; then	#Code to calculate for columns
+	while [ "$colCount" -le "$numCols" ]; do
+		findMedSumAvg $$tempcol$colCount $numRows	#passes temp file and number of rows
+		echo -e $med >> $$tempMedian	#adds medians to temp file
+		echo -e $avg >> $$tempAverage	#adds averages to temp file
+		colCount=`expr $colCount + 1`
+	done;
+	printCol "Averages:" $$tempAverage
+	printCol "Medians:" $$tempMedian
+else err; fi; cleanup	#prints error if neither rows nor columns are specified
