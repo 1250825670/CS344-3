@@ -1,10 +1,9 @@
 #!/bin/bash
 trap "rm -f $$*" SIGHUP SIGINT SIGTERM	#traps kill command
-echoerr() { echo "$@" 1>&2; }	#to print errors to screen
-function err { echoerr "./stats {-rows|-cols} [file]"; rm -f $$*; exit 1; }	#echo out error messages
+echoerr() { echo "$@" 1>&2; rm -f $$*; exit 1; }	#to print errors to screen
 printCol(){ echo $1; while read line; do echo -e -n "$line\t"; done < $2; echo -e "\n"; }	#prints column data
 makeTempFiles(){ colCount=1; rowCount=1;
-	while [ "$colCount" -le "`head -1 $datafilepath | tr "\t" "\n" | wc -l`" ]; do cat $datafilepath | cut -f $colCount > $$tempcol$colCount
+	while [ "$colCount" -le "`head -1 $datafilepath | wc -w`" ]; do cat $datafilepath | cut -f $colCount > $$tempcol$colCount
 	colCount=`expr $colCount + 1`; done	#creates temp files for each column
 	while [ "$rowCount" -le "`wc -l < $datafilepath`" ]; do head -$rowCount $datafilepath | tail -1 | tr "\t" "\n" >> $$temprow$rowCount
 	rowCount=`expr $rowCount + 1`; done; }	#creates temp files for each row
@@ -15,25 +14,24 @@ findMedSumAvg(){ tmpcnt=1; sum=0;
 	done < <(sort -n $1)
 	avg=$(( ($sum + ($2 / 2)) / $2 )); }	#finds average
 datafilepath="$$datafile"
-if [ "$#" = "0" ]; then err	#if nothing is passed in
-elif [ "$#" = "1" ]; then cat > "$datafilepath"		#if it should be read from stdin
+if [ "$#" = "1" ]; then cat > "$datafilepath"		#if it should be read from stdin
 elif [ "$#" = "2" ]; then datafilepath=$2		#if it should be read from provided file
-else err; fi	#if too many options are provided
-if [[ ! -e $datafilepath ]] || [[ ! -r $datafilepath ]] || [[ ! -f $datafilepath ]]; then echoerr "./stats cannot read $datafilepath"; rm -f $$*; exit 1;  fi;	#checks that file exists and has read permission
-if [[ `wc -c < $datafilepath` == 0 ]]; then echoerr "FILE IS EMPTY"; exit 1; fi;	#checks if file is empty
+else echoerr "./stats {-rows|-cols} [file]"; fi	#if too many or too few options are provided
+if [[ ! -e $datafilepath ]] || [[ ! -r $datafilepath ]] || [[ ! -f $datafilepath ]]; then echoerr "./stats cannot read $datafilepath"; fi	#checks that file exists and has read permission
+if [[ `wc -c < $datafilepath` == 0 ]]; then echoerr "FILE IS EMPTY"; fi	#checks if file is empty
 makeTempFiles; rowCount=1; colCount=1
 if [[ $1 == -r* ]]; then	#Code to calculate for rows
 	echo -e "Average\tMedian"	#print headers
 	while [ "$rowCount" -le "`wc -l < $datafilepath`" ]; do
-		findMedSumAvg $$temprow$rowCount $((`head -1 $datafilepath | tr "\t" "\n" | wc -l`))	#passes temp file and number of columns
+		findMedSumAvg $$temprow$rowCount $((`head -1 $datafilepath | wc -w`))	#passes temp file and number of columns
 		echo -e "$avg\t$med"	#prints results
 		rowCount=`expr $rowCount + 1`; done
 elif [[ $1 == -c* ]]; then	#Code to calculate for columns
-	while [ "$colCount" -le "`head -1 $datafilepath | tr "\t" "\n" | wc -l`" ]; do
+	while [ "$colCount" -le "`head -1 $datafilepath | wc -w`" ]; do
 		findMedSumAvg $$tempcol$colCount $((`wc -l < $datafilepath`))	#passes temp file and number of rows
 		echo -e $med >> $$tempMedian	#adds medians to temp file
 		echo -e $avg >> $$tempAverage	#adds averages to temp file
 		colCount=`expr $colCount + 1`; done
 	printCol "Averages:" $$tempAverage
 	printCol "Medians:" $$tempMedian
-else err; fi; rm -f $$*	#prints error if neither rows nor columns are specified
+else echoerr "./stats {-rows|-cols} [file]"; fi; rm -f $$*	#prints error if neither rows nor columns are specified
