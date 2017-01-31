@@ -12,12 +12,7 @@ struct Room {
 	enum nameList name;
 	int totalConnections;
 	int usedConnections;
-	struct Room* connection1;
-	struct Room* connection2;
-	struct Room* connection3;
-	struct Room* connection4;
-	struct Room* connection5;
-	struct Room* connection6;
+	struct Room* connections[6];
 	enum roomTypes type;
 }
 
@@ -42,14 +37,15 @@ void makeConnections(struct Room* rooms[], int numRooms){
 				randNum = rand() % numRooms;
 			rooms[i]->usedConnections++;
 			rooms[randNum}->usedConnections++;
-			rooms[i]->connection(rooms[i]->usedConnections) = rooms[randNum];
-			rooms[randNum]->connection(rooms[randNum}->usedConnections) = rooms[i];
+			rooms[i]->connections[rooms[i]->usedConnections] = rooms[randNum];
+			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
 		}
 	}
 }
 
 int main(void){
 	time_t t;
+	char fileLocation[], input[];
 	srand((unsigned) time(&t));
 	int numRooms = rand() % 8;
 	struct Room* rooms[numRooms+3];
@@ -57,18 +53,30 @@ int main(void){
 	rooms[0]->type = START_ROOM;
 	rooms[1] = &makeRoom();
 	rooms[1]->type = END_ROOM;
-	int i;
+	int i, j;
 	for (i=2; i<(numRooms+3); i++){
 		rooms[i] = &makeRoom();
 	}
+	fileLocation = strcat(strcat("pettinis.rooms.",getPID()),"/room");
 	makeConnections(rooms, numRooms);
-	int PID = getpid();	//get current process ID
+	FILE *file;
 	int file_descriptor;
-	for (i=1; i<=numRooms; i++){
-		file_descriptor = open(strcat(strcat("pettinis.rooms.",PID),strcat(strcat("/room",i),".txt")));
-		if ( file_descriptor == -1)
-			exit(1);
+	for (i=1; i<=numRooms+3; i++){
+		file = fopen(strcat(strcat(fileLocation, i),".txt"),"w");
+		input = strcat("ROOM NAME: ",rooms[i]->name);
+		fputs(input, file);
+		fputs("\n", file);
 		
-		close(file_descriptor);
+		for(j=1; j<=rooms[i]->totalConnections; j++){
+			sprintf(input, "CONNECTION %d: ",j);
+			strcat(input,rooms[i]->connections[j]->name);
+			fputs(input, file);
+			fputs("\n", file);
+		}
+		
+		input = strcat("ROOM TYPE: ",rooms[i]->type);
+		fputs(input, file);
+		fputs("\n", file);
+		fclose(file);
 	}
 }
