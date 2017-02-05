@@ -39,18 +39,15 @@ char* getName(int randNum){
 }
 
 struct Room* makeRoom(){
-	printf("making room\n");
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
 	sprintf(room->name,getName(rand() % 10));
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
 	sprintf(room->type,"MID_ROOM");
-	printf("room created\n");
 	return room;
 }
 
 void makeConnections(struct Room* rooms[], int numRooms){
-	printf("making connections\n");
 	int randNum;	//to hold randomly generated numbers
 	int i;
 	for (i=0; i<numRooms; i++){
@@ -64,7 +61,6 @@ void makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
 		}
 	}
-	printf("connections made\n");
 }
 
 int main(void){
@@ -78,46 +74,40 @@ int main(void){
 	rooms[1] = makeRoom();
 	sprintf(rooms[1]->type,"END_ROOM");
 	int i, j;
-	printf("numrooms: %d\n",numRooms);
 	for (i=2; i<(numRooms+3); i++){
 		rooms[i] = makeRoom();
 	}
-	printf("after makerooms\n");
-	char directoryLocation[1000];
-	sprintf(directoryLocation, "pettinis.rooms.%d./",getpid());
+	char directory[100];
+	sprintf(directory, "pettinis.rooms.%d",getpid());
+	mkdir(directory,S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
 	makeConnections(rooms, numRooms);
 	FILE *file;
-	int file_descriptor;
-	printf("before saving\n");
 	for (i=1; i<=numRooms+3; i++){
-		char fileLocation[1000];
-		sprintf(fileLocation,"%sroom%d.txt",directoryLocation,i);
-		printf("opening file\n");
-		file = fopen(fileLocation,"w");
-		if(file == 0)
+		char fileLocation[100];
+		sprintf(fileLocation,"./%s/%s_room",directory,rooms[i]->name);
+		char* location = fileLocation;
+		file = fopen(location,"w");
+		if(file == 0){
 			printf("file open failed\n");
-		printf("getting name\n");
-		char input1[1000] = "ROOM NAME: ";
+			exit(1);
+		}
+		char input1[100] = "ROOM NAME: ";
 		strcat(input1,rooms[i]->name);
-		printf("saving name\n");
 		fprintf(file,input1);
 		//fputs(input1, file);
 		//fputs("\n", file);
-		printf("getting connections\n");
 		for(j=1; j<=rooms[i]->totalConnections; j++){
-			char input2[1000];
+			char input2[100];
 			sprintf(input2, "CONNECTION %d: %s",j,rooms[i]->connections[j]->name);
 			fputs(input2, file);
 			fputs("\n", file);
 		}
-		printf("getting type\n");
-		char input3[1000] = "ROOM TYPE: ";
+		char input3[100] = "ROOM TYPE: ";
 		strcat(input3,rooms[i]->type);
 		fputs(input3, file);
 		fputs("\n", file);
 		fclose(file);
 	}
-	printf("after saving\n");
 	for (i=0; i<(numRooms+3); i++){
 		free(rooms[i]);
 	}
