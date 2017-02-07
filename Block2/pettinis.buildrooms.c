@@ -79,7 +79,7 @@ int main(void){
 	}
 	char directory[100];
 	sprintf(directory, "pettinis.rooms.%d",getpid());
-	mkdir(directory,S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
+	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
 	makeConnections(rooms, numRooms);
 	FILE *file;
 	for (i=1; i<=numRooms+3; i++){
@@ -96,7 +96,7 @@ int main(void){
 		fprintf(file,input1);
 		//fputs(input1, file);
 		//fputs("\n", file);
-		for(j=1; j<=rooms[i]->totalConnections; j++){
+		for(j=1; j<=rooms[i]->usedConnections; j++){
 			char input2[100];
 			sprintf(input2, "CONNECTION %d: %s",j,rooms[i]->connections[j]->name);
 			fputs(input2, file);

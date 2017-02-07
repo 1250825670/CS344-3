@@ -117,9 +117,27 @@ void playGame(struct Map map){
 }
 
 int main(void){
-	struct stat buffer;
-	int status;
-	status = stat(".",&buffer);
+	struct stat statVar;
+	DIR *dir;
+	struct dirent *current, newest;
+	int temp, curr;
+	char directory[100];
+	dir = opendir(".");
+	if(dir){
+		while ((current = readdir(dir)) != NULL){
+			if(strstr(current->d_name,"pettinis.rooms") != 0){
+				stat(current->d_name, &statVar);
+				curr = ctime(&statVar.st_mtime);
+				it(curr > temp){
+					newest = current;
+					directory = newest->d_name;
+					temp = curr;
+				}
+			}
+			printf("%s", ctime(&statVar.st_mtime)); 
+		}
+	}
+	closedir(dir);
 	
 	struct Room* rooms[numRooms];
 	struct Map map;
