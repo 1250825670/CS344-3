@@ -15,39 +15,52 @@ struct Room {
 	char type[25];
 };
 
-char* getName(int randNum){
-	if (randNum == 0)
+char* getName(int randNum, int usedRooms[]){
+	if (randNum == 0 && usedRooms[0] == 0)
 		return "EDINBURGH\0";
-	else if (randNum == 1)
+	else if (randNum == 1 && usedRooms[1] == 1)
 		return "CORNWALL\0";
-	else if (randNum == 2)
+	else if (randNum == 2 && usedRooms[2] == 2)
 		return "CARDIFF\0";
-	else if (randNum == 3)
+	else if (randNum == 3 && usedRooms[3] == 3)
 		return "BRISTOL\0";
-	else if (randNum == 4)
+	else if (randNum == 4 && usedRooms[4] == 4)
 		return "YORK\0";
-	else if (randNum == 5)
+	else if (randNum == 5 && usedRooms[5] == 5)
 		return "KENT\0";
-	else if (randNum == 6)
+	else if (randNum == 6 && usedRooms[6] == 6)
 		return "OXFORD\0";
-	else if (randNum == 7)
+	else if (randNum == 7 && usedRooms[7] == 7)
 		return "SANDFORD\0";
-	else if (randNum == 8)
+	else if (randNum == 8 && usedRooms[8] == 8)
 		return "CANTERBURY\0";
-	else if (randNum == 9)
+	else if (randNum == 9 && usedRooms[9] == 9)
 		return "LONDON\0";
+	printf("Error, no names available or invalid input.\n");
+	return "ERROR\0";
 }
 
 struct Room* makeRoom(){
+	int usedRooms[10], i;
+	for(i=0;i<10;i++)
+		usedRooms[i] = 0;
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
-	sprintf(room->name,getName(rand() % 10));
+	sprintf(room->name,getName(rand() % 10),usedRooms);
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
 	sprintf(room->type,"MID_ROOM");
 	return room;
 }
 
-void makeConnections(struct Room* rooms[], int numRooms){
+int verifyConnections(struct Room* rooms[], int numRooms)){
+	int i;
+	for(i=0;i<numRooms;i++){
+		if(rooms[i]->usedConnections < 3)
+			return 1;
+	}
+	return 0;
+}
+int makeConnections(struct Room* rooms[], int numRooms){
 	int randNum;	//to hold randomly generated numbers
 	int i;
 	for (i=0; i<numRooms; i++){
@@ -61,6 +74,8 @@ void makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
 		}
 	}
+	return verifyConnections(rooms, numRooms);
+		
 }
 
 int main(void){
@@ -80,7 +95,10 @@ int main(void){
 	char directory[100];
 	sprintf(directory, "pettinis.rooms.%d",getpid());
 	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
-	makeConnections(rooms, numRooms);
+	if(makeConnections(rooms, numRooms) == 1){
+		printf("Error: Not all rooms have 3 connections.\n");
+		return 1;
+	}
 	FILE *file;
 	for (i=1; i<=numRooms+3; i++){
 		char fileLocation[100];
