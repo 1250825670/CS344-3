@@ -42,6 +42,9 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 		if(rooms[i]->usedConnections < 3)
 			return 1;
 	}
+	printf("verifyConnections:\n");
+	for(i=0;i<numRooms;i++)
+		printf("%s\n",rooms[i]->name);
 	return 0;
 }
 int makeConnections(struct Room* rooms[], int numRooms){
@@ -58,6 +61,9 @@ int makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->usedConnections++;
 		}
 	}
+	printf("makeConnections:\n");
+	for(i=0;i<numRooms;i++)
+		printf("%s\n",rooms[i]->name);
 	return verifyConnections(rooms, numRooms);
 }
 
@@ -81,6 +87,8 @@ int main(void){
 	char directory[100];
 	sprintf(directory, "pettinis.rooms.%d",getpid());
 	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
+	for(i=0;i<numRooms;i++)
+		printf("%s\n",rooms[i]->name);
 	if(makeConnections(rooms, numRooms) == 1){
 		printf("Error: Not all rooms have 3 connections.\n");
 		return 1;
