@@ -74,8 +74,10 @@ int main(void){
 	srand((unsigned) time(&t));
 	struct Room *rooms[numRooms];
 	rooms[0] = makeRoom(usedRooms);
+	printf("Main: %s\n",rooms[i]->name);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
+	printf("Main: %s\n",rooms[i]->name);
 	sprintf(rooms[1]->type,"END_ROOM");
 	for (i=2; i<numRooms; i++){
 		rooms[i] = makeRoom(usedRooms);
