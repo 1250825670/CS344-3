@@ -130,17 +130,18 @@ int main(void){
 		printf("Error: Not all rooms have 3 connections.\n");
 		return 1;
 	}
+	for(i=0;i<numRooms;i++)
+		printf("%s\n",rooms[i]->name);
 	printf("Connections created\n");
 	FILE *file;
-	printf("numRooms: %d\n",numRooms);
 	for (i=0; i<numRooms; i++){
 		printf("Room %d\n",i+1);
 		char fileLocation[100];
 		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
 		printf("%s\n",fileLocation);
-		char* location = fileLocation;
-		printf("%s\n",location);
-		file = fopen(location,"w");
+		//char* location = fileLocation;
+		//printf("%s\n",fileLocation);
+		file = fopen(fileLocation,"w");
 		if(file == 0){
 			printf("file open failed\n");
 			exit(1);
