@@ -19,10 +19,8 @@ char* getName(int* usedRooms){
 	char *roomNames[10] = {"EDINBURGH","CORNWALL","CARDIFF","BRISTOL","YORK","KENT","OXFORD","SANDFORD","CANTERBURY","LONDON"};
 	int randNum = rand() % 10;
 	while(1){
-		printf("Generated: %d\n",randNum);
 		if(usedRooms[randNum] == 0){
 			usedRooms[randNum] = 1;
-			printf("Used: %d: %s\n",randNum,roomNames[randNum]);
 			return roomNames[randNum];
 		}
 		randNum = rand() % 10;
@@ -32,7 +30,6 @@ char* getName(int* usedRooms){
 struct Room* makeRoom(int* usedRooms){
 	struct Room *room = (struct Room *) malloc(sizeof(struct Room));
 	sprintf(room->name,getName(usedRooms));
-	printf("makeRoom: %s\n",room->name);
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
 	sprintf(room->type,"MID_ROOM");
@@ -53,12 +50,12 @@ int makeConnections(struct Room* rooms[], int numRooms){
 	for (i=0; i<numRooms; i++){
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
-			while (randNum == i && rooms[randNum]->usedConnections < rooms[randNum]->totalConnections)
+			while (randNum == i)
 				randNum = rand() % numRooms;
-			rooms[i]->usedConnections++;
-			rooms[randNum]->usedConnections++;
 			rooms[i]->connections[rooms[i]->usedConnections] = rooms[randNum];
 			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
+			rooms[i]->usedConnections++;
+			rooms[randNum]->usedConnections++;
 		}
 	}
 	return verifyConnections(rooms, numRooms);
@@ -74,14 +71,11 @@ int main(void){
 	srand((unsigned) time(&t));
 	struct Room *rooms[numRooms];
 	rooms[0] = makeRoom(usedRooms);
-	printf("Main: %s\n",rooms[0]->name);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
-	printf("Main: %s\n",rooms[1]->name);
 	sprintf(rooms[1]->type,"END_ROOM");
 	for (i=2; i<numRooms; i++){
 		rooms[i] = makeRoom(usedRooms);
-		printf("Main: %s\n",rooms[i]->name);
 	}
 	printf("Rooms created\n");
 	char directory[100];
