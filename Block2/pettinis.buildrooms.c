@@ -22,7 +22,7 @@ char* getName(int* usedRooms){
 		printf("Generated: %d\n",randNum);
 		if(usedRooms[randNum] == 0){
 			usedRooms[randNum] = 1;
-			printf("Used: %d\n",randNum);
+			printf("Used: %d: %s\n",randNum,roomNames[randNum]);
 			return roomNames[randNum];
 		}
 		randNum = rand() % 10;
