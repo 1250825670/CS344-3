@@ -46,11 +46,11 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 }
 int makeConnections(struct Room* rooms[], int numRooms){
 	int randNum;	//to hold randomly generated numbers
-	int i,j;
-	for(j=0;j<numRooms;j++)
-			printf("%s\n",rooms[j]->name);
+	int i;//,j;
+	//for(j=0;j<numRooms;j++)
+	//		printf("%s\n",rooms[j]->name);
 	for (i=0; i<numRooms; i++){
-		printf("Run %d\n",i);
+		//printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
 			while (randNum == i)
@@ -62,8 +62,8 @@ int makeConnections(struct Room* rooms[], int numRooms){
 		}
 	}
 	printf("makeConnections:\n");
-	for(j=0;j<numRooms;j++)
-		printf("%s\n",rooms[j]->name);
+	//for(j=0;j<numRooms;j++)
+	//	printf("%s\n",rooms[j]->name);
 	return verifyConnections(rooms, numRooms);
 }
 
@@ -123,6 +123,7 @@ int main(void){
 	for (i=0; i<numRooms; i++){
 		printf("Removing %d\n",i);
 		free(rooms[i]);
+		rooms[i]=0;
 	}
 	printf("Rooms deleted\n");
 }
