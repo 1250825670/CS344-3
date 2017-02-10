@@ -124,7 +124,7 @@ int main(void){
 	FILE *file;
 	for (i=1; i<=numRooms+3; i++){
 		char fileLocation[100];
-		sprintf(fileLocation,"./%s/%s_room",directory,rooms[i]->name);
+		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
 		char* location = fileLocation;
 		file = fopen(location,"w");
 		if(file == 0){
