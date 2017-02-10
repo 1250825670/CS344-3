@@ -17,29 +17,30 @@ struct Room {
 
 char* getName(int randNum, int usedRooms[]){
 	char name[25];
+	memset(name,'0',sizeof(name));
 	if (randNum == 0 && usedRooms[0] == 0)
-		name = "EDINBURGH\0";
+		name = "EDINBURGH";
 	else if (randNum == 1 && usedRooms[1] == 0)
-		name = "CORNWALL\0";
+		name = "CORNWALL";
 	else if (randNum == 2 && usedRooms[2] == 0)
-		name = "CARDIFF\0";
+		name = "CARDIFF";
 	else if (randNum == 3 && usedRooms[3] == 0)
-		name = "BRISTOL\0";
+		name = "BRISTOL";
 	else if (randNum == 4 && usedRooms[4] == 0)
-		name = "YORK\0";
+		name = "YORK";
 	else if (randNum == 5 && usedRooms[5] == 0)
-		name = "KENT\0";
+		name = "KENT";
 	else if (randNum == 6 && usedRooms[6] == 0)
-		name = "OXFORD\0";
+		name = "OXFORD";
 	else if (randNum == 7 && usedRooms[7] == 0)
-		name = "SANDFORD\0";
+		name = "SANDFORD";
 	else if (randNum == 8 && usedRooms[8] == 0)
-		name = "CANTERBURY\0";
+		name = "CANTERBURY";
 	else if (randNum == 9 && usedRooms[9] == 0)
-		name = "LONDON\0";
+		name = "LONDON";
 	else{
 		printf("Error, no names available or invalid input.\n");
-		name = "ERROR\0";
+		name = "ERROR";
 	}
 	usedRooms[randNum] = 1;
 	return name;
