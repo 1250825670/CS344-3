@@ -47,7 +47,7 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 	}
 	return 0;
 }
-int checkUsedConnection(struct Room* connections[6], struct Room* room){
+int checkUsedConnection(struct Room* connections[], struct Room* room){
 	int i;
 	for(i=0;i<6;i++){
 		if(room == connections[i]){
