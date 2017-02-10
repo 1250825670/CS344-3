@@ -143,7 +143,7 @@ int main(void){
 	}
 	printf("Files created\n");
 	for (i=0; i<numRooms; i++){
-		printf("Removing %d\n",i);
+		printf("Removing %d: %p\n",i,(void *)rooms[i]);
 		free(rooms[i]);
 		rooms[i]=0;
 	}
