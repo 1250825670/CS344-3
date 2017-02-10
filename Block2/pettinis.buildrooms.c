@@ -15,8 +15,18 @@ struct Room {
 	char type[25];
 };
 
-char* getName(int randNum, int* usedRooms){
-	if (randNum == 0 && usedRooms[0] == 0){
+char* getName(int* usedRooms){
+	char *roomNames[10] = {"EDINBURGH","CORNWALL","CARDIFF","BRISTOL","YORK","KENT","OXFORD","SANDFORD","CANTERBURY","LONDON"};
+	int randNum = rand() % 10;
+	while(1){
+		if(usedRooms[randNum] == 0){
+			usedRooms[randNum] = 1;
+			return roomNames[randNum];
+		}
+		randNum = rand() % 10;
+	}
+	
+	/*if (randNum == 0 && usedRooms[0] == 0){
 		usedRooms[randNum] = 1;
 		return "EDINBURGH\0";
 	}
@@ -59,12 +69,12 @@ char* getName(int randNum, int* usedRooms){
 	else{
 		printf("Error, no names available or invalid input.\n");
 		return "ERROR\0";
-	}
+	}*/
 }
 
 struct Room* makeRoom(int* usedRooms){
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
-	sprintf(room->name,getName(rand() % 10,usedRooms));
+	sprintf(room->name,getName(usedRooms));
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
 	sprintf(room->type,"MID_ROOM");
