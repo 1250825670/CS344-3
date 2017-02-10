@@ -98,18 +98,18 @@ int makeConnections(struct Room* rooms[], int numRooms){
 }
 
 int main(void){
+	int usedRooms[10], i, j;
+	for(i=0;i<10;i++)
+		usedRooms[i] = 0;
 	time_t t;
 	pid_t getpid(void);
 	srand((unsigned) time(&t));
 	int numRooms = rand() % 8;
 	struct Room* rooms[numRooms+3];
-	rooms[0] = makeRoom();
+	rooms[0] = makeRoom(&usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
-	rooms[1] = makeRoom();
+	rooms[1] = makeRoom(&usedRooms);
 	sprintf(rooms[1]->type,"END_ROOM");
-	int usedRooms[10], i, j;
-	for(i=0;i<10;i++)
-		usedRooms[i] = 0;
 	for (i=2; i<(numRooms+3); i++){
 		rooms[i] = makeRoom(&usedRooms);
 	}
