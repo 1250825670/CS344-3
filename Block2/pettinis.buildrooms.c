@@ -47,7 +47,7 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 	}
 	return 0;
 }
-int checkUsedConnection(int usedConnections[], randNum){
+int checkUsedConnection(int usedConnections[], int randNum){
 	int i;
 	for(i=0;i<6;i++){
 		if(numRooms == usedConnections[i]){
