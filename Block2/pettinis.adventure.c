@@ -21,13 +21,30 @@ struct Map {
 	struct Room* end;
 };
 
+void makeConnections(int numRooms, struct Room* rooms[]){
+	int i,j,slot=0;
+	for(i=0; i<numRooms; i++){
+		for(j=i+1;j<numRooms; j++){
+			slot=0;
+			while(slot < rooms[i]->totalConnections){
+				if(strcmp(rooms[i]->connectionNames[slot],rooms[j]->name) == 0){
+					rooms[i]->connections[rooms[i]->usedConnections] = rooms[j];
+					rooms[j]->connections[rooms[j]->usedConnections] = rooms[i];
+					rooms[i]->usedConnections++;
+					rooms[j]->usedConnections++;
+				}
+				slot++;
+			}
+		}
+	}
+}
 void makeRooms(char* directory, int numRooms, struct Room* rooms[], struct Map* map){
 	int i;
 	FILE *file;
 	for(i=0,i<numRooms;i++){
 		struct Room* room = (struct Room*) malloc(sizeof(struct Room));
 		fileLocation[100];
-		sprintf(fileLocation,"%s%s_room",directory,rooms[i]->name);
+		sprintf(fileLocation,"%s%s_room",directory,rooms[i]->name); //INCORRECT Needs to find files
 		file = fopen(fileLocation, "r");
 		char buf[25];
 		fgets(buf,11,file);
@@ -37,7 +54,7 @@ void makeRooms(char* directory, int numRooms, struct Room* rooms[], struct Map* 
 		while(fgetc(file) == 'C'){
 			fgets(buf,13,file);
 			fgets(buf,25,file);
-			room->connectionNames[connections] = temp;
+			room->connectionNames[connections] = buf;
 			connections++;
 		}
 		room->totalConnections = connections;
@@ -56,20 +73,6 @@ void makeRooms(char* directory, int numRooms, struct Room* rooms[], struct Map* 
 		rooms[i] = room;
 	}
 	makeConnections(rooms);
-}
-
-void makeConnections(int numRooms, struct Room* rooms[]){
-	int i,j,connections=0;
-	for(i=0; i<numRooms; i++){
-		for(j=i+1;j<numRooms; j++){
-			if(strcmp(rooms[j]->name,rooms[i]->connectionNames[rooms[i]->usedConnections]) == 0){
-				rooms[i]->connections[rooms[i]->usedConnections] = rooms[j];
-				rooms[j]->connections[rooms[j]->usedConnections] = rooms[i];
-				rooms[i]->usedConnections++;
-				rooms[j]->usedConnections++;
-			}
-		}
-	}
 }
 
 void print(struct Map map){
@@ -120,7 +123,7 @@ int main(void){
 	struct stat statVar;
 	DIR *dir;
 	struct dirent *current, newest;
-	int temp, curr;
+	int temp, curr, numRooms = 7;
 	char directory[100];
 	dir = opendir(".");
 	if(dir){
