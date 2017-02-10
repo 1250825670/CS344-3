@@ -105,7 +105,7 @@ int main(void){
 	time_t t;
 	pid_t getpid(void);
 	srand((unsigned) time(&t));
-	struct Room* rooms[numRooms+3];
+	struct Room* rooms[numRooms];
 	rooms[0] = makeRoom(usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
