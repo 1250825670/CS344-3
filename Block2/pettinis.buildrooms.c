@@ -47,17 +47,29 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 	}
 	return 0;
 }
+int checkUsedConnection(int usedConnections[], randNum){
+	int i;
+	for(i=0;i<6;i++){
+		if(numRooms == usedConnections[i]){
+			return 1;
+		}
+	}
+	return 0;
+}
 int makeConnections(struct Room* rooms[], int numRooms){
 	int randNum;	//to hold randomly generated numbers
-	int i;//,j;
+	int i,j;
 	//for(j=0;j<numRooms;j++)
 	//		printf("%s\n",rooms[j]->name);
+	int usedConnections[6], connectionSlot = 0;
+	for(j=0;j<6;j++)
+		usedConections = -1;
 	for (i=0; i<numRooms; i++){
 		//printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
 			printf("Created: %d\n",randNum);
-			while (randNum == i)
+			while (randNum == i || checkUsedConnection(usedConnections, randNum) == 1)
 				randNum = rand() % numRooms;
 			printf("Used: %d\n",randNum);
 			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
@@ -68,6 +80,8 @@ int makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->usedConnections++;
 			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
 			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
+			usedConnections[connectionSlot] = randNum;
+			connectionSlot++;
 		}
 	}
 	//printf("makeConnections:\n");
