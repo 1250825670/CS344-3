@@ -67,10 +67,10 @@ int makeConnections(struct Room* rooms[], int numRooms){
 		for(j=0;j<6;j++)
 			usedConnectionsList[j] = -1;
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
-			randNum = rand() % numRooms;
-			printf("Created: %d\n",randNum);
-			while (randNum == i || checkUsedConnection(usedConnectionsList, randNum) == 1)
+			while (randNum == i || checkUsedConnection(usedConnectionsList, randNum) == 1){
 				randNum = rand() % numRooms;
+				printf("Created: %d\n",randNum);
+			}
 			printf("Used: %d\n",randNum);
 			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
 			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
