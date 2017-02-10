@@ -50,7 +50,7 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 int checkUsedConnection(struct Room* rooms[], int slot, int randNum){
 	int i;
 	for(i=0;i<6;i++){
-		if(rooms[slot]->connections[i] == rooms[randNum]){
+		if(strcmp(rooms[slot]->connections[i]->name,rooms[randNum]->name) == 0){
 			return 1;
 		}
 	}
