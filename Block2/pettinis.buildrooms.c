@@ -60,13 +60,13 @@ int makeConnections(struct Room* rooms[], int numRooms){
 			while (randNum == i)
 				randNum = rand() % numRooms;
 			printf("Used: %d\n",randNum);
-			pritnf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
+			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
 			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
 			rooms[i]->connections[rooms[i]->usedConnections] = rooms[randNum];
 			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
 			rooms[i]->usedConnections++;
 			rooms[randNum]->usedConnections++;
-			pritnf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
+			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
 			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
 		}
 	}
