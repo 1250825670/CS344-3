@@ -28,10 +28,13 @@ char* getName(int* usedRooms){
 }
 
 struct Room* makeRoom(int* usedRooms){
+	int i;
 	struct Room *room = (struct Room *) malloc(sizeof(struct Room));
 	sprintf(room->name,getName(usedRooms));
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
+	for(i=0;i<6;i++)
+		room->connections[i] = 0;
 	sprintf(room->type,"MID_ROOM");
 	return room;
 }
@@ -53,12 +56,18 @@ int makeConnections(struct Room* rooms[], int numRooms){
 		//printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
+			printf("Created: %d\n",randNum);
 			while (randNum == i)
 				randNum = rand() % numRooms;
+			printf("Used: %d\n",randNum);
+			pritnf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
+			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
 			rooms[i]->connections[rooms[i]->usedConnections] = rooms[randNum];
 			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
 			rooms[i]->usedConnections++;
 			rooms[randNum]->usedConnections++;
+			pritnf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
+			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
 		}
 	}
 	//printf("makeConnections:\n");
