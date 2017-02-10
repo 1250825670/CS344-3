@@ -19,9 +19,10 @@ char* getName(int* usedRooms){
 	char *roomNames[10] = {"EDINBURGH","CORNWALL","CARDIFF","BRISTOL","YORK","KENT","OXFORD","SANDFORD","CANTERBURY","LONDON"};
 	int randNum = rand() % 10;
 	while(1){
-		printf("%d\n",randNum);
+		printf("Generated: %d\n",randNum);
 		if(usedRooms[randNum] == 0){
 			usedRooms[randNum] = 1;
+			printf("Used: %d\n",randNum);
 			return roomNames[randNum];
 		}
 		randNum = rand() % 10;
