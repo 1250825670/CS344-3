@@ -47,9 +47,10 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 int makeConnections(struct Room* rooms[], int numRooms){
 	int randNum;	//to hold randomly generated numbers
 	int i,j;
+	for(j=0;j<numRooms;j++)
+			printf("%s\n",rooms[j]->name);
 	for (i=0; i<numRooms; i++){
-		for(j=0;j<numRooms;j++)
-			printf("%d: %s\n",i,rooms[j]->name);
+		printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
 			while (randNum == i)
@@ -86,8 +87,6 @@ int main(void){
 	char directory[100];
 	sprintf(directory, "pettinis.rooms.%d",getpid());
 	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
 	if(makeConnections(rooms, numRooms) == 1){
 		printf("Error: Not all rooms have 3 connections.\n");
 		return 1;
@@ -99,8 +98,6 @@ int main(void){
 		char fileLocation[100];
 		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
 		printf("%s\n",fileLocation);
-		//char* location = fileLocation;
-		//printf("%s\n",fileLocation);
 		file = fopen(fileLocation,"w");
 		if(file == 0){
 			printf("file open failed\n");
