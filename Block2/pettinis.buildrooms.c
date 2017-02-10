@@ -106,12 +106,12 @@ int main(void){
 	srand((unsigned) time(&t));
 	int numRooms = rand() % 8;
 	struct Room* rooms[numRooms+3];
-	rooms[0] = makeRoom(&usedRooms);
+	rooms[0] = makeRoom(usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
-	rooms[1] = makeRoom(&usedRooms);
+	rooms[1] = makeRoom(usedRooms);
 	sprintf(rooms[1]->type,"END_ROOM");
 	for (i=2; i<(numRooms+3); i++){
-		rooms[i] = makeRoom(&usedRooms);
+		rooms[i] = makeRoom(usedRooms);
 	}
 	printf("Rooms created\n");
 	char directory[100];
