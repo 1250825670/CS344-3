@@ -163,7 +163,7 @@ int main(void){
 		fclose(file);
 	}
 	printf("Files created\n");
-	for (i=0; i<(numRooms); i++){
+	for (i=0; i<numRooms; i++){
 		free(rooms[i]);
 	}
 	printf("Rooms deleted\n");
