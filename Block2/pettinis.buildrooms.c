@@ -94,7 +94,6 @@ int makeConnections(struct Room* rooms[], int numRooms){
 		}
 	}
 	return verifyConnections(rooms, numRooms);
-		
 }
 
 int main(void){
@@ -110,7 +109,7 @@ int main(void){
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
 	sprintf(rooms[1]->type,"END_ROOM");
-	for (i=2; i<(numRooms); i++){
+	for (i=2; i<numRooms; i++){
 		rooms[i] = makeRoom(usedRooms);
 	}
 	printf("Rooms created\n");
