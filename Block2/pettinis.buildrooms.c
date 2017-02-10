@@ -133,8 +133,8 @@ int main(void){
 	printf("Connections created\n");
 	FILE *file;
 	printf("numRooms: %d\n",numRooms);
-	for (i=1; i<=numRooms; i++){
-		printf("Room %d\n",i);
+	for (i=0; i<numRooms; i++){
+		printf("Room %d\n",i+1);
 		char fileLocation[100];
 		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
 		printf("%s\n",fileLocation);
@@ -150,7 +150,7 @@ int main(void){
 		fprintf(file,input1);
 		//fputs(input1, file);
 		//fputs("\n", file);
-		for(j=1; j<=rooms[i]->usedConnections; j++){
+		for(j=i; j<=rooms[i]->usedConnections; j++){
 			char input2[100];
 			sprintf(input2, "CONNECTION %d: %s",j,rooms[i]->connections[j]->name);
 			fputs(input2, file);
