@@ -98,19 +98,19 @@ int makeConnections(struct Room* rooms[], int numRooms){
 }
 
 int main(void){
+	int numRooms = 7;
 	int usedRooms[10], i, j;
 	for(i=0;i<10;i++)
 		usedRooms[i] = 0;
 	time_t t;
 	pid_t getpid(void);
 	srand((unsigned) time(&t));
-	int numRooms = rand() % 8;
 	struct Room* rooms[numRooms+3];
 	rooms[0] = makeRoom(usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
 	sprintf(rooms[1]->type,"END_ROOM");
-	for (i=2; i<(numRooms+3); i++){
+	for (i=2; i<(numRooms); i++){
 		rooms[i] = makeRoom(usedRooms);
 	}
 	printf("Rooms created\n");
@@ -124,7 +124,7 @@ int main(void){
 	printf("Connections created\n");
 	FILE *file;
 	printf("numRooms: %d\n",numRooms);
-	for (i=1; i<=numRooms+3; i++){
+	for (i=1; i<=numRooms; i++){
 		printf("Room %d\n",i);
 		char fileLocation[100];
 		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
@@ -154,7 +154,7 @@ int main(void){
 		fclose(file);
 	}
 	printf("Files created\n");
-	for (i=0; i<(numRooms+3); i++){
+	for (i=0; i<(numRooms); i++){
 		free(rooms[i]);
 	}
 	printf("Rooms deleted\n");
