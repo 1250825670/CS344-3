@@ -51,7 +51,7 @@ struct Room* makeRoom(){
 	for(i=0;i<10;i++)
 		usedRooms[i] = 0;
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
-	sprintf(room->name,getName(rand() % 10,usedRooms);
+	sprintf(room->name,getName(rand() % 10,usedRooms));
 	room->totalConnections = (rand() % 4) + 3;
 	room->usedConnections = 0;
 	sprintf(room->type,"MID_ROOM");
