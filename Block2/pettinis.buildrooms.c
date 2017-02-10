@@ -16,34 +16,50 @@ struct Room {
 };
 
 char* getName(int randNum, int usedRooms[]){
-	char name[25];
-	memset(name,'0',sizeof(name));
-	if (randNum == 0 && usedRooms[0] == 0)
-		name = "EDINBURGH";
-	else if (randNum == 1 && usedRooms[1] == 0)
-		name = "CORNWALL";
-	else if (randNum == 2 && usedRooms[2] == 0)
-		name = "CARDIFF";
-	else if (randNum == 3 && usedRooms[3] == 0)
-		name = "BRISTOL";
-	else if (randNum == 4 && usedRooms[4] == 0)
-		name = "YORK";
-	else if (randNum == 5 && usedRooms[5] == 0)
-		name = "KENT";
-	else if (randNum == 6 && usedRooms[6] == 0)
-		name = "OXFORD";
-	else if (randNum == 7 && usedRooms[7] == 0)
-		name = "SANDFORD";
-	else if (randNum == 8 && usedRooms[8] == 0)
-		name = "CANTERBURY";
-	else if (randNum == 9 && usedRooms[9] == 0)
-		name = "LONDON";
+	if (randNum == 0 && usedRooms[0] == 0){
+		usedRooms[randNum] = 1;
+		return "EDINBURGH\0";
+	}
+	else if (randNum == 1 && usedRooms[1] == 0){
+		usedRooms[randNum] = 1;
+		return "CORNWALL\0";
+	}
+	else if (randNum == 2 && usedRooms[2] == 0){
+		usedRooms[randNum] = 1;
+		return "CARDIFF\0";
+	}
+	else if (randNum == 3 && usedRooms[3] == 0){
+		usedRooms[randNum] = 1;
+		return "BRISTOL\0";
+	}
+	else if (randNum == 4 && usedRooms[4] == 0){
+		usedRooms[randNum] = 1;
+		return "YORK\0";
+	}
+	else if (randNum == 5 && usedRooms[5] == 0){
+		usedRooms[randNum] = 1;
+		return "KENT\0";
+	}
+	else if (randNum == 6 && usedRooms[6] == 0){
+		usedRooms[randNum] = 1;
+		return "OXFORD\0";
+	}
+	else if (randNum == 7 && usedRooms[7] == 0){
+		usedRooms[randNum] = 1;
+		return "SANDFORD\0";
+	}
+	else if (randNum == 8 && usedRooms[8] == 0){
+		usedRooms[randNum] = 1;
+		return "CANTERBURY\0";
+	}
+	else if (randNum == 9 && usedRooms[9] == 0){
+		usedRooms[randNum] = 1;
+		return "LONDON\0";
+	}
 	else{
 		printf("Error, no names available or invalid input.\n");
-		name = "ERROR";
+		return "ERROR\0";
 	}
-	usedRooms[randNum] = 1;
-	return name;
 }
 
 struct Room* makeRoom(){
