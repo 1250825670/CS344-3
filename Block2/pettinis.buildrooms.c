@@ -114,8 +114,7 @@ int main(void){
 	time_t t;
 	pid_t getpid(void);
 	srand((unsigned) time(&t));
-	//struct Room *rooms[numRooms];
-	struct Room *rooms = (struct Room *) malloc(sizeof(struct Room *)*numRooms);
+	struct Room *rooms[numRooms];
 	rooms[0] = makeRoom(usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
@@ -168,6 +167,5 @@ int main(void){
 		printf("Removing %d\n",i);
 		free(rooms[i]);
 	}
-	free(rooms);
 	printf("Rooms deleted\n");
 }
