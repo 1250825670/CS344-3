@@ -62,10 +62,7 @@ char* getName(int randNum, int usedRooms[]){
 	}
 }
 
-struct Room* makeRoom(){
-	int usedRooms[10], i;
-	for(i=0;i<10;i++)
-		usedRooms[i] = 0;
+struct Room* makeRoom(int* usedRooms[]){
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
 	sprintf(room->name,getName(rand() % 10,usedRooms));
 	room->totalConnections = (rand() % 4) + 3;
@@ -110,9 +107,11 @@ int main(void){
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom();
 	sprintf(rooms[1]->type,"END_ROOM");
-	int i, j;
+	int usedRooms[10], i, j;
+	for(i=0;i<10;i++)
+		usedRooms[i] = 0;
 	for (i=2; i<(numRooms+3); i++){
-		rooms[i] = makeRoom();
+		rooms[i] = makeRoom(&usedRooms);
 	}
 	printf("Rooms created\n");
 	char directory[100];
