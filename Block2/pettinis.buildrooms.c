@@ -62,7 +62,7 @@ int makeConnections(struct Room* rooms[], int numRooms){
 	//for(j=0;j<numRooms;j++)
 	//		printf("%s\n",rooms[j]->name);
 	for (i=0; i<numRooms; i++){
-		//printf("Run %d\n",i);
+		printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			while (randNum == i || checkUsedConnection(rooms[i]->connections, rooms[randNum]) == 1){
 				randNum = rand() % numRooms;
