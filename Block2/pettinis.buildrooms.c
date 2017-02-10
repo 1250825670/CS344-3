@@ -61,7 +61,7 @@ int makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->usedConnections++;
 		}
 	}
-	printf("makeConnections:\n");
+	//printf("makeConnections:\n");
 	//for(j=0;j<numRooms;j++)
 	//	printf("%s\n",rooms[j]->name);
 	return verifyConnections(rooms, numRooms);
