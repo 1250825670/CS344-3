@@ -147,19 +147,18 @@ int main(void){
 		}
 		char input1[100] = "ROOM NAME: ";
 		strcat(input1,rooms[i]->name);
+		strcat(input1,"\n");
 		fprintf(file,input1);
-		//fputs(input1, file);
-		//fputs("\n", file);
-		for(j=i; j<=rooms[i]->usedConnections; j++){
+		for(j=0; j<rooms[i]->usedConnections; j++){
 			char input2[100];
-			sprintf(input2, "CONNECTION %d: %s",j,rooms[i]->connections[j]->name);
-			fputs(input2, file);
-			fputs("\n", file);
+			sprintf(input2, "CONNECTION %d: %s",j+1,rooms[i]->connections[j]->name);
+			strcat(input2,"\n");
+			fprintf(file,input2);
 		}
 		char input3[100] = "ROOM TYPE: ";
 		strcat(input3,rooms[i]->type);
-		fputs(input3, file);
-		fputs("\n", file);
+		strcat(input3,"\n");
+		fprintf(file,input3);
 		fclose(file);
 	}
 	printf("Files created\n");
