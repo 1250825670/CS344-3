@@ -164,6 +164,7 @@ int main(void){
 	}
 	printf("Files created\n");
 	for (i=0; i<numRooms; i++){
+		printf"Removing %d\n",i);
 		free(rooms[i]);
 	}
 	printf("Rooms deleted\n");
