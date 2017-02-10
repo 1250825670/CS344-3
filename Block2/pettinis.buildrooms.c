@@ -42,15 +42,14 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 		if(rooms[i]->usedConnections < 3)
 			return 1;
 	}
-	printf("verifyConnections:\n");
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
 	return 0;
 }
 int makeConnections(struct Room* rooms[], int numRooms){
 	int randNum;	//to hold randomly generated numbers
-	int i;
+	int i,j;
 	for (i=0; i<numRooms; i++){
+		for(j=0;j<numRooms;j++)
+			printf("%d: %s\n",i,rooms[j]->name);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
 			randNum = rand() % numRooms;
 			while (randNum == i)
@@ -62,8 +61,8 @@ int makeConnections(struct Room* rooms[], int numRooms){
 		}
 	}
 	printf("makeConnections:\n");
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
+	for(j=0;j<numRooms;j++)
+		printf("%s\n",rooms[j]->name);
 	return verifyConnections(rooms, numRooms);
 }
 
@@ -93,8 +92,6 @@ int main(void){
 		printf("Error: Not all rooms have 3 connections.\n");
 		return 1;
 	}
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
 	printf("Connections created\n");
 	FILE *file;
 	for (i=0; i<numRooms; i++){
