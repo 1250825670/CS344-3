@@ -115,7 +115,7 @@ int main(void){
 	pid_t getpid(void);
 	srand((unsigned) time(&t));
 	//struct Room *rooms[numRooms];
-	struct Room *rooms = (struct Room *) malloc(sizeof(struct Room)*numRooms);
+	struct Room *rooms = (struct Room *) malloc(sizeof(struct Room *)*numRooms);
 	rooms[0] = makeRoom(usedRooms);
 	sprintf(rooms[0]->type,"START_ROOM");
 	rooms[1] = makeRoom(usedRooms);
