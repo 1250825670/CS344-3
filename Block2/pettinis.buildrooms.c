@@ -50,7 +50,7 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 int checkUsedConnection(int usedConnectionsList[], int randNum){
 	int i;
 	for(i=0;i<6;i++){
-		if(randNum == usedConnections[i]){
+		if(randNum == usedConnectionsList[i]){
 			return 1;
 		}
 	}
@@ -63,7 +63,7 @@ int makeConnections(struct Room* rooms[], int numRooms){
 	//		printf("%s\n",rooms[j]->name);
 	int usedConnectionsList[6], connectionSlot = 0;
 	for(j=0;j<6;j++)
-		usedConnectionsList = -1;
+		usedConnectionsList = 50;
 	for (i=0; i<numRooms; i++){
 		//printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
@@ -80,7 +80,7 @@ int makeConnections(struct Room* rooms[], int numRooms){
 			rooms[randNum]->usedConnections++;
 			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
 			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
-			usedConnections[connectionSlot] = randNum;
+			usedConnectionsList[connectionSlot] = randNum;
 			connectionSlot++;
 		}
 	}
