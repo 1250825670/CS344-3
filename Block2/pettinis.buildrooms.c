@@ -17,11 +17,9 @@ struct Room {
 
 char* getName(int* usedRooms){
 	char *roomNames[10] = {"EDINBURGH","CORNWALL","CARDIFF","BRISTOL","YORK","KENT","OXFORD","SANDFORD","CANTERBURY","LONDON"};
-	int i;
-	for(i=0;i<10;i++)
-		printf("%s\n",roomNames[i]);
 	int randNum = rand() % 10;
 	while(1){
+		printf("%d\n",randNum);
 		if(usedRooms[randNum] == 0){
 			usedRooms[randNum] = 1;
 			return roomNames[randNum];
