@@ -114,6 +114,7 @@ int main(void){
 	for (i=2; i<(numRooms+3); i++){
 		rooms[i] = makeRoom();
 	}
+	printf("Rooms created\n");
 	char directory[100];
 	sprintf(directory, "pettinis.rooms.%d",getpid());
 	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
@@ -121,11 +122,16 @@ int main(void){
 		printf("Error: Not all rooms have 3 connections.\n");
 		return 1;
 	}
+	printf("Connections created\n");
 	FILE *file;
+	printf("numRooms: %d\n",numRooms);
 	for (i=1; i<=numRooms+3; i++){
+		printf("Room %d\n",i);
 		char fileLocation[100];
 		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
+		printf("%s\n",fileLocation);
 		char* location = fileLocation;
+		printf("%s\n",location);
 		file = fopen(location,"w");
 		if(file == 0){
 			printf("file open failed\n");
@@ -148,7 +154,9 @@ int main(void){
 		fputs("\n", file);
 		fclose(file);
 	}
+	printf("Files created\n");
 	for (i=0; i<(numRooms+3); i++){
 		free(rooms[i]);
 	}
+	printf("Rooms deleted\n");
 }
