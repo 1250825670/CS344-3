@@ -47,10 +47,10 @@ int verifyConnections(struct Room* rooms[], int numRooms){
 	}
 	return 0;
 }
-int checkUsedConnection(struct Room* connections[], struct Room* room){
+int checkUsedConnection(struct Room* rooms[], int slot, int randNum){
 	int i;
 	for(i=0;i<6;i++){
-		if(room == connections[i]){
+		if(rooms[slot]->connections[i] == rooms[randNum]){
 			return 1;
 		}
 	}
@@ -64,7 +64,7 @@ int makeConnections(struct Room* rooms[], int numRooms){
 	for (i=0; i<numRooms; i++){
 		printf("Run %d\n",i);
 		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
-			while (randNum == i || checkUsedConnection(rooms[i]->connections, rooms[randNum]) == 1){
+			while (randNum == i || checkUsedConnection(rooms, i, randNum) == 1){
 				randNum = rand() % numRooms;
 				printf("Created: %d\n",randNum);
 			}
