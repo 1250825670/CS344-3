@@ -62,7 +62,7 @@ char* getName(int randNum, int usedRooms[]){
 	}
 }
 
-struct Room* makeRoom(int &usedRooms[]){
+struct Room* makeRoom(int& usedRooms[]){
 	struct Room* room = (struct Room*) malloc(sizeof(struct Room));
 	sprintf(room->name,getName(rand() % 10,usedRooms));
 	room->totalConnections = (rand() % 4) + 3;
