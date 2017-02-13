@@ -1,3 +1,9 @@
+/* Sammy Pettinichi
+ * CS344 - Operating Systems
+ * Block 2 - Adventure Game
+ * pettinis.buildrooms.c
+ */
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,145 +13,139 @@
 #include <string.h>
 #include <time.h>
 
-struct Room {
-	char name[25];
+//statis element to hold all room names
+char *roomNames[10] = {"Edinburgh","Cornwall","Cardiff","Bristol","York","Kent","Oxford","Sandford","Canterbury","London"};
+
+struct Room {	//Room struct to hold all room information
+	char name[15];
 	int totalConnections;
-	int usedConnections;
+	int usedConnections[6];
 	struct Room* connections[6];
-	char type[25];
+	char connectionNames[6][15];
+	char type[15];
 };
 
 char* getName(int* usedRooms){
-	char *roomNames[10] = {"EDINBURGH","CORNWALL","CARDIFF","BRISTOL","YORK","KENT","OXFORD","SANDFORD","CANTERBURY","LONDON"};
 	int randNum = rand() % 10;
-	while(1){
-		if(usedRooms[randNum] == 0){
-			usedRooms[randNum] = 1;
+	while(1){	//loops indefinitely
+		if(usedRooms[randNum] == 0){	//returns room name if unused so far
+			usedRooms[randNum] = 1;	//sets room as used
 			return roomNames[randNum];
 		}
-		randNum = rand() % 10;
+		randNum = rand() % 10;	//generates new number if room already used
 	}
 }
 
 struct Room* makeRoom(int* usedRooms){
-	int i;
-	struct Room *room = (struct Room *) malloc(sizeof(struct Room));
-	sprintf(room->name,getName(usedRooms));
-	room->totalConnections = (rand() % 4) + 3;
-	room->usedConnections = 0;
-	for(i=0;i<6;i++)
+	int i,used=0;
+	for(i=0;i<10;i++){	//checks how many rooms have been created
+		if(usedRooms[i] == 1)
+			used++;
+	}
+	char* startroom = "START_ROOM\0";
+	char* endroom = "END_ROOM\0";
+	char* midroom = "MID_ROOM\0";
+	struct Room *room = (struct Room *) malloc(sizeof(struct Room));	//allocates heap space
+	sprintf(room->name,"%s",getName(usedRooms));	//gets a name at random
+	room->totalConnections = 0;
+	for(i=0;i<6;i++)	//sets all connections to null
 		room->connections[i] = 0;
-	sprintf(room->type,"MID_ROOM");
+	if(used == 0)	//sets type as start room if first created
+		sprintf(room->type,"%s",startroom);
+	else if(used == 1)	//sets type as end room if second created
+		sprintf(room->type,"%s",endroom);
+	else	//sets the rest as mid rooms
+		sprintf(room->type,"%s",midroom);
 	return room;
 }
 
-int verifyConnections(struct Room* rooms[], int numRooms){
-	int i;
-	for(i=0;i<numRooms;i++){
-		if(rooms[i]->usedConnections < 3)
-			return 1;
-	}
-	return 0;
-}
-int checkUsedConnection(struct Room* rooms[], int slot, int randNum){
-	int i;
-	for(i=0;i<6;i++){
-		if(strcmp(rooms[slot]->connections[i]->name,rooms[randNum]->name) == 0){
-			return 1;
-		}
-	}
-	return 0;
-}
-int makeConnections(struct Room* rooms[], int numRooms){
-	int randNum;	//to hold randomly generated numbers
-	int i;//,j;
-	//for(j=0;j<numRooms;j++)
-	//		printf("%s\n",rooms[j]->name);
-	for (i=0; i<numRooms; i++){
-		printf("Run %d\n",i);
-		while (rooms[i]->usedConnections < rooms[i]->totalConnections){
-			while (randNum == i || checkUsedConnection(rooms, i, randNum) == 1){
-				randNum = rand() % numRooms;
-				printf("Created: %d\n",randNum);
+void makeConnections(struct Room* rooms[], int numRooms){
+	int i,j,k,randNum,randSlot,nameSlot,connectSlot,exists, used;
+	for(i=0;i<numRooms;i++){	//loops through all rooms
+		randNum = (rand() % 4) + 3;
+		for(j=rooms[i]->totalConnections;j<randNum;j++){	//checks how many links have been made so far
+			randSlot = rand() % 10;
+			exists = 0;
+			used = 0;
+			for(k=0;k<10;k++){
+				if(strcmp(roomNames[k],rooms[i]->name)==0){	//finds which roomName slot the current room is
+						nameSlot = k;
+				}
 			}
-			printf("Used: %d\n",randNum);
-			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
-			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
-			rooms[i]->connections[rooms[i]->usedConnections] = rooms[randNum];
-			rooms[randNum]->connections[rooms[randNum]->usedConnections] = rooms[i];
-			rooms[i]->usedConnections++;
-			rooms[randNum]->usedConnections++;
-			printf("%s <-> %s\n",rooms[i]->name, rooms[randNum]->name);
-			printf("%d <-> %d\n",rooms[i]->usedConnections,rooms[randNum]->usedConnections);
+			while(exists == 0 || used == 1){
+				for(k=0;k<numRooms;k++){
+					if(strcmp(roomNames[randSlot],rooms[k]->name)==0 && randSlot != nameSlot){	//ensures sought room has been created and isn't the current room
+						exists = 1;
+						connectSlot = k;	//finds which roomName slot the linked room is
+					}
+				}
+				for(k=0;k<rooms[i]->totalConnections;k++){
+					if(randSlot == rooms[i]->usedConnections[k]){	//checks if this connection has already been used
+						used = 1;
+					}
+				}
+				if(used == 1 || exists == 0){	//if this room doesn't exist or was already used
+					randSlot++;	//increment it one and check the next r oom
+					exists = 0;	//reset trackers
+					used = 0;
+					if(randSlot==10){	//if it reaches the end of the list restart at the beginning
+						randSlot -= 10;
+					}
+				}
+			}
+			rooms[i]->usedConnections[rooms[i]->totalConnections] = randSlot;	//save the connection slot of the connection
+			rooms[connectSlot]->usedConnections[rooms[connectSlot]->totalConnections] = nameSlot;	//connect back to the current room
+			rooms[i]->totalConnections++;	//increment how many connections used on both rooms
+			rooms[connectSlot]->totalConnections++;
 		}
 	}
-	//printf("makeConnections:\n");
-	//for(j=0;j<numRooms;j++)
-	//	printf("%s\n",rooms[j]->name);
-	return verifyConnections(rooms, numRooms);
 }
 
 int main(void){
 	int numRooms = 7;
-	int usedRooms[10], i, j;
-	for(i=0;i<10;i++)
+	int usedRooms[10];	//variable to hold which rooms have been used
+	int i, j;
+	for(i=0;i<10;i++)	//sets all rooms to unused
 		usedRooms[i] = 0;
 	time_t t;
 	pid_t getpid(void);
-	srand((unsigned) time(&t));
-	struct Room *rooms[numRooms];
-	rooms[0] = makeRoom(usedRooms);
-	sprintf(rooms[0]->type,"START_ROOM");
-	rooms[1] = makeRoom(usedRooms);
-	sprintf(rooms[1]->type,"END_ROOM");
-	for (i=2; i<numRooms; i++){
+	srand((unsigned) time(&t));	//seeds rand with the time
+	struct Room *rooms[numRooms];	//creates array of Room structs
+	for (i=0; i<numRooms; i++){	//creates 7 rooms
 		rooms[i] = makeRoom(usedRooms);
 	}
-	printf("Rooms created\n");
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
+	makeConnections(rooms, numRooms);	//connects rooms
 	char directory[100];
-	sprintf(directory, "pettinis.rooms.%d",getpid());
-	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);
-	if(makeConnections(rooms, numRooms) == 1){
-		printf("Error: Not all rooms have 3 connections.\n");
-		return 1;
-	}
-	for(i=0;i<numRooms;i++)
-		printf("%s\n",rooms[i]->name);
-	printf("Connections created\n");
+	sprintf(directory, "pettinis.rooms.%d",getpid());	//gets directory name based on PID
+	mkdir(directory,S_IRWXU | S_IRWXG | S_IRWXO);	//creates directory
 	FILE *file;
-	for (i=0; i<numRooms; i++){
-		printf("Room %d\n",i+1);
+	for (i=0; i<numRooms; i++){		//saves room files
 		char fileLocation[100];
-		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);
-		printf("%s\n",fileLocation);
-		file = fopen(fileLocation,"w");
+		sprintf(fileLocation,"%s/%s_room",directory,rooms[i]->name);	//creates location inside directory
+		file = fopen(fileLocation,"w");	//opens file
 		if(file == 0){
-			printf("file open failed\n");
+			printf("file open failed\n");	//exits if file failed to open
 			exit(1);
 		}
 		char input1[100] = "ROOM NAME: ";
 		strcat(input1,rooms[i]->name);
 		strcat(input1,"\n");
-		fprintf(file,input1);
-		for(j=0; j<rooms[i]->usedConnections; j++){
+		fprintf(file,input1);	//saves room name
+		for(j=0; j<rooms[i]->totalConnections; j++){	//loops through all connections
 			char input2[100];
-			sprintf(input2, "CONNECTION %d: %s",j+1,rooms[i]->connections[j]->name);
+			sprintf(input2, "CONNECTION %d: ",j+1);
+			strcat(input2,roomNames[rooms[i]->usedConnections[j]]);
 			strcat(input2,"\n");
-			fprintf(file,input2);
+			fprintf(file,input2);	//saves the connection
 		}
 		char input3[100] = "ROOM TYPE: ";
 		strcat(input3,rooms[i]->type);
 		strcat(input3,"\n");
-		fprintf(file,input3);
+		fprintf(file,input3);	//saves room type
 		fclose(file);
 	}
-	printf("Files created\n");
-	for (i=0; i<numRooms; i++){
-		printf("Removing %d: %p\n",i,(void *)rooms[i]);
+	for (i=0; i<numRooms; i++){	//frees all the Room structs
 		free(rooms[i]);
-		rooms[i]=0;
+		rooms[i]=0;	//sets pointer to null
 	}
-	printf("Rooms deleted\n");
 }
