@@ -14,59 +14,59 @@
 #define MAX_COMMANDS 512
 
 void print(char* text);
-char** getInput();
+char** getInput(int* background);
 char** parseInput(char input[]);
-void executeCommand(char** commandArguments);
-void runStatus(char input[]);
-void runCD(char* input);
-void runMisc(char* input);
+void executeCommand(char** commandArguments, int* exitVal, int* background);
 
-void executeCommand(char** commandArguments){
+void executeCommand(char** commandArguments, int* exitVal, int* background){  
   if(strcmp(commandArguments[0],"status")==0){
-    runStatus(commandArguments);
+    if(*exitVal == 0 || *exitVal == 1)
+      fprintf(stdout,"exit value %d\n",*exitVal);
+    else
+      fprintf(stdout,"terminated by signal %d\n",*exitVal);
+    fflush();
+    *exitVal = 0;
   }
   else if(strcmp(commandArguments[0],"cd")==0){
-    runCD(commandArguments);
+    if(commandArguments[1] == 0)
+      chdir(getenv("HOME"));
+    else
+      chdir(commandArguments[1]);
+    *exitVal = 0;
   }
   else{
-    runMisc(commadArguments); 
+    if(
+    
+    fprintf(stdout,"%s: no such file or directory\n",commandArguments[0]);
+    fflush();
   }
-}
-void runMisc(char* input){
-  //exec() family of commands
-  else
-    print("unknown command\n");
-}
-
-void runStatus(char* input){
-  
-}
-
-void runCD(char* input){
-  
 }
 
 int main(int argc, char *argv[]){
+  char** commandArguments;
+  int exitVal, background;
   do{
-    char** commandArguments = getInput(input);
+    background = 0;
+    commandArguments = getInput(input, &background);
     
     if(commandArguments[0] != 0 && strcmp(commandArguments[0],"exit") != 0){
-      executeCommand(commandArguments);
+      executeCommand(commandArguments, &exitVal, &background);
     }
+    free(commandArguments);
   }while(strcmp(commandArguments[0],"exit") != 0);
 }
 
-char** getInput(){
+char** getInput(int* background){
   char input[MAX_INPUT];
   memset(intput,'\0',sizeof(input));
-  print("smallsh: ");
+  print(": ");
   fgets(input, MAX_INPUT, stdin)
   
-  return parseInput(input);
+  return parseInput(input,background);
 }
 
-char** parseInput(char input[]){
-  int counter, i;
+char** parseInput(char input[], int* background){
+  int counter;
   char** commandArguments = malloc(sizeof(char *) * MAX_COMMANDS);
   char command[MAX_INPUT];
   char* token;
@@ -85,8 +85,8 @@ char** parseInput(char input[]){
     counter++;
     token = strtok(NULL, " ");
   }
-  for(i=1; i<strlen(input); i++){
-   
+  if(strcmp(commandArugments[counter-1],"&")==0){
+    *background = 1;
   }
   return commandArguments;
 }
