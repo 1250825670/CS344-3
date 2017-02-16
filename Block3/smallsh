@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_INPUT 2048
+
+char* getInput(){
+  char input[MAX_INPUT];
+  fprintf(stdout, ": " );
+  fflush();
+  fgets(input, MAX_INPUT, stdin)
+}
+
+int main(int argc, char *argv[]){
+  
+}
