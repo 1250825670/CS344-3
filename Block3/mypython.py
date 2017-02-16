@@ -18,10 +18,6 @@ for i in range(10):
   f1.write(random.choice(string.ascii_lowercase))
   f2.write(random.choice(string.ascii_lowercase))
   f3.write(random.choice(string.ascii_lowercase))
-  
-f1.write("\n")
-f2.write("\n")
-f3.write("\n")
 
 #close files
 f1.close
