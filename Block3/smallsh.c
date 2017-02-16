@@ -21,9 +21,9 @@ void executeCommand(char** commandArguments, int* exitVal, int* background);
 void executeCommand(char** commandArguments, int* exitVal, int* background){  
   if(strcmp(commandArguments[0],"status")==0){
     if(*exitVal == 0 || *exitVal == 1)
-      fprintf(stdout,"exit value %d\n",*exitVal);
+      puts("exit value %d\n",*exitVal);
     else
-      fprintf(stdout,"terminated by signal %d\n",*exitVal);
+      puts("terminated by signal %d\n",*exitVal);
     fflush(stdout);
     *exitVal = 0;
   }
@@ -37,7 +37,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background){
   else{
     if(
     
-    fprintf(stdout,"%s: no such file or directory\n",commandArguments[0]);
+    puts("%s: no such file or directory\n",commandArguments[0]);
     fflush(stdout);
   }
 }
@@ -60,6 +60,7 @@ char** getInput(int* background){
   char input[MAX_INPUT];
   memset(intput,'\0',sizeof(input));
   print(": ");
+  fflush(stdin);
   fgets(input, MAX_INPUT, stdin)
   
   return parseInput(input,background);
@@ -92,6 +93,6 @@ char** parseInput(char input[], int* background){
 }
 
 void print(char* text){
-  fprintf(stdout, text);
+  puts(text);
   fflush(stdout);
 }
