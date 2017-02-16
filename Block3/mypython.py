@@ -9,7 +9,7 @@ file2 = "file2"
 file3 = "file3"
 
 #open files for writing
-f1 = open(file1,"w+")1
+f1 = open(file1,"w+")
 f2 = open(file2,"w+")
 f3 = open(file3,"w+")
 
