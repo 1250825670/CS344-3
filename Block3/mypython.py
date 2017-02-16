@@ -15,9 +15,9 @@ f3 = open(file3,"w+")
 
 #write 10 random letters to files
 for i in range(10):
-  f1.write(random.choice(string.letters))
-  f2.write(random.choice(string.letters))
-  f3.write(random.choice(string.letters))
+  f1.write(random.choice(string.ascii_lowercase))
+  f2.write(random.choice(string.ascii_lowercase))
+  f3.write(random.choice(string.ascii_lowercase))
 
 #close files
 f1.close
