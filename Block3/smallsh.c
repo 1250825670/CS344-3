@@ -168,6 +168,9 @@ char** parseInput(char input[], int* background, int* counter){
   strcpy(command, input);
   token = strtok(command, " ");
   while(token != NULL){
+    if(strcmp(token,"&&")==0){
+      strcpy(token,pid());
+    }
     strcpy(commandArguments[counter],token);
     *counter++;
     token = strtok(NULL, " ");
