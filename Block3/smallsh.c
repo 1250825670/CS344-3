@@ -54,13 +54,11 @@ void checkChildren(){
 
 //execute the user's command
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter){  
-  char printOutput[MAX_INPUT], commandToRun[MAX_INPUT;
+  char printOutput[MAX_INPUT];
   int i, childExitMethod = -5, waitResult;
   pid_t childPID = -5;
   int outSlot=0,inSlot=0,inFile=-1,outFile=-1;
   memset(printOutput,'\0',sizeof(printOutput));
-  memset(commandToRun,'\0',sizeof(commandToRun));
-  strcpy(commandToRun,commandArguments[0]);
   if(strcmp(commandArguments[0],"status")==0){
     if(*exitVal == 0 || *exitVal == 1){
       memset(printOutput,'\0',sizeof(printOutput));
@@ -108,18 +106,6 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
         *exitVal = 1;
       }
     }
-    int minSlot = 0;
-    if(inSlot == 0)
-      min = outSlot;
-    else
-      min = inSlot;
-    if(min == 0){
-      min = *counter;
-    }
-    for(i=0;i<min;i++){
-      strcat(commandToRun," ");
-      strcat(commandToRun,commandArguments[i]);
-    }
   }
   
   childPID = fork();
@@ -131,18 +117,26 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
     break;
   }
   else if(childPID == 0){
-    if(inSlot != 0)
-      dup2(inFile,0);
-    if(outSlot != 0)
+    int minSlot = 0;
+    if(outSlot != 0){
       dup2(outFile,1);
+      min = outSlot;
+    }
+    if(inSlot != 0){
+      dup2(inFile,0);
+      min = inSlot;
+    }
+    if(min == 0){
+      min = *counter;
+    }
+    commandArguments[min] = NULL;
     
-    
-    
-    if(inSlot != 0)
-      close(inFile);
-    if(outSlot != 0)
-      close(outFile);
-    exit(0);
+    if(execvp(commandArguments[0],commandArguments) < 0){
+      memset(printOutput,'\0',sizeof(printOutput));
+      sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
+      print(printOutput);
+      _exit(1);
+    }
   }
   else{
     if(inSlot != 0)
@@ -157,12 +151,6 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
       sprintf(printOutput,"background pid is %d\n",childPID);
       print(printOutput);
     }
-  }
-  
-  else{
-    memset(printOutput,'\0',sizeof(printOutput));
-    sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
-    print(printOutput);
   }
 }
 
@@ -218,6 +206,7 @@ char** parseInput(char input[], int* background, int* counter){
   }
   if(strcmp(commandArugments[*counter-1],"&")==0){
     *background = 1;
+    strcpy(commandArguments[*counter-1],"\0");
   }
   return commandArguments;
 }
