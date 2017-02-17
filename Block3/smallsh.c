@@ -25,22 +25,50 @@ void print(char* text);
 char** getInput(int* background, int* counter);
 char** parseInput(char input[], int* counter);
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter);
+void checkChildren();
+
+//checks for background process completion
+void checkChildren(){
+  char printOutput[MAX_INPUT];
+  int childExitMethod = -5, childPID = -5;
+  int exitStatus;
+  
+  do{
+    childPID = waitpid(-1,&childExitMethod,0);
+    if(childPID > 0){
+      if(WIFEXITED(childExitMethod) != 0){
+        exitStatus = WEXITSTATUS(childExitMethod);
+        memset(printOutput,'\0',sizeof(printOutput));
+        sprintf(printOutput,"background pid %d is done: exit value %d\n",childPID,exitStatus);
+        print(printOutput);
+      }
+      else if(WIFSIGNALED(childExitMethod){
+        exitStatus = WTERMSIG(childExitMethod);
+        memset(printOutput,'\0',sizeof(printOutput));
+        sprintf(printOutput,"background pid %d is done: terminated by signal %d\n",childPID,exitStatus);
+        print(printOutput);
+      }
+    }
+  }while(childPID != 0);
+}
 
 //execute the user's command
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter){  
   char printOutput[MAX_INPUT], commandToRun[MAX_INPUT;
-  int i,inFile=-1,outFile=-1;
-  pid_t childPID;
-  int outSlot=0,inSlot=0;
+  int i, childExitMethod = -5, waitResult;
+  pid_t childPID = -5;
+  int outSlot=0,inSlot=0,inFile=-1,outFile=-1;
   memset(printOutput,'\0',sizeof(printOutput));
   memset(commandToRun,'\0',sizeof(commandToRun));
   strcpy(commandToRun,commandArguments[0]);
   if(strcmp(commandArguments[0],"status")==0){
     if(*exitVal == 0 || *exitVal == 1){
+      memset(printOutput,'\0',sizeof(printOutput));
       sprintf(printOutput,"exit value %d\n",*exitVal);
       print(printOutput);
     }
     else{
+      memset(printOutput,'\0',sizeof(printOutput));
       sprintf(printOutput,"terminated by signal %d\n",*exitVal);
       print(printOutput);
     }
@@ -65,6 +93,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
     if(inSlot != 0){
       inFile = open(commandArugments[inSlot+1],O_RDONLY);
       if(inFile == -1){
+        memset(printOutput,'\0',sizeof(printOutput));
         spritnf(printOutput,"cannot open %s for input\n",commandArguments[inSlot+1]);
         print(printOutput);
         *exitVal = 1;
@@ -73,6 +102,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
     if(outSlot != 0){
       outFile = open(commandArguments[outSlot+1],O_CREAT);
       if(outFile == -1){
+        memset(printOutput,'\0',sizeof(printOutput));
         spritnf(printOutput,"cannot open %s for output\n",commandArguments[outSlot+1]);
         print(printOutput);
         *exitVal = 1;
@@ -94,10 +124,11 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
   
   childPID = fork();
   if(childPID == -1){
+    memset(printOutput,'\0',sizeof(printOutput));
     sprintf(printOutput,"fork failed\n");
     print(printOutput);
-    *exitVal = 1;
-    return;
+    exit(1);
+    break;
   }
   else if(childPID == 0){
     if(inSlot != 0)
@@ -111,16 +142,25 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
       close(inFile);
     if(outSlot != 0)
       close(outFile);
+    exit(0);
   }
   else{
     if(inSlot != 0)
       close(inFile);
     if(outSlot != 0)
       close(outFile);
-    
+    if(*background == 0){
+      waitResult = waitpid(childPID,&childExitMethod,0);
+    }
+    else{
+      memset(printOutput,'\0',sizeof(printOutput));
+      sprintf(printOutput,"background pid is %d\n",childPID);
+      print(printOutput);
+    }
   }
   
   else{
+    memset(printOutput,'\0',sizeof(printOutput));
     sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
     print(printOutput);
   }
@@ -138,6 +178,7 @@ int main(int argc, char *argv[]){
       executeCommand(commandArguments, &exitVal, &background,&counter);
     }
     free(commandArguments);
+    checkChildren();
   }while(strcmp(commandArguments[0],"exit") != 0);
 }
 
