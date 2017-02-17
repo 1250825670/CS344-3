@@ -175,7 +175,7 @@ char** getInput(int* background, int* counter){
   char input[MAX_INPUT];
   memset(intput,'\0',sizeof(input));
   print(": ");
-  fflush(stdin);
+  //fflush(stdin);
   read(0,input,sizeof(input));
   fgets(input, MAX_INPUT, stdin)
   
