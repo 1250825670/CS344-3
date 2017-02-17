@@ -1,3 +1,7 @@
+# Sammy Petinichi
+# CS344 - Operating Systems
+# Python Program
+
 #!/usr/bin/python
 
 import random
