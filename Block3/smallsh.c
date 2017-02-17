@@ -1,5 +1,5 @@
 //sstring to parse fgets data
-//use read/write for re-entrance
+//use read/write for re-entrance?
 
 /* Sammy Pettinichi
  * CS344 - Operating Systems
@@ -29,7 +29,8 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 //execute the user's command
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter){  
   char printOutput[MAX_INPUT], commandToRun[MAX_INPUT;
-  int i,inFile=-1,outFile=-1,childPID;
+  int i,inFile=-1,outFile=-1;
+  pid_t childPID;
   int outSlot=0,inSlot=0;
   memset(printOutput,'\0',sizeof(printOutput));
   memset(commandToRun,'\0',sizeof(commandToRun));
