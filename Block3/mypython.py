@@ -44,8 +44,8 @@ f2.close
 f3.close
 
 #generate two random numbers from 1-42
-num1 = random.randint(0,42)
-num2 = random.randint(0,42)
+num1 = random.randint(1,42)
+num2 = random.randint(1,42)
 #print the two numbers
 print(num1)
 print(num2)
