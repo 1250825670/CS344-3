@@ -29,7 +29,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 //execute the user's command
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter){  
   char printOutput[MAX_INPUT], commandToRun[MAX_INPUT;
-  int i,file=-1,childPID;
+  int i,inFile=-1,outFile=-1,childPID;
   int outSlot=0,inSlot=0;
   memset(printOutput,'\0',sizeof(printOutput));
   memset(commandToRun,'\0',sizeof(commandToRun));
@@ -62,18 +62,18 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
       }
     }
     if(inSlot != 0){
-      file = open(commandArugments[inSlot+1],O_RDONLY);
-      if(file == -1){
+      inFile = open(commandArugments[inSlot+1],O_RDONLY);
+      if(inFile == -1){
         spritnf(printOutput,"cannot open %s for input\n",commandArguments[inSlot+1]);
-        print(pritnOutput);
+        print(printOutput);
         *exitVal = 1;
       }
     }
     if(outSlot != 0){
-      file = open(commandArguments[outSlot+1],O_CREAT);
-      if(file == -1){
+      outFile = open(commandArguments[outSlot+1],O_CREAT);
+      if(outFile == -1){
         spritnf(printOutput,"cannot open %s for output\n",commandArguments[outSlot+1]);
-        print(pritnOutput);
+        print(printOutput);
         *exitVal = 1;
       }
     }
@@ -91,7 +91,33 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
     }
   }
   
-  
+  childPID = fork();
+  if(childPID == -1){
+    sprintf(printOutput,"fork failed\n");
+    print(printOutput);
+    *exitVal = 1;
+    return;
+  }
+  else if(childPID == 0){
+    if(inSlot != 0)
+      dup2(inFile,0);
+    if(outSlot != 0)
+      dup2(outFile,1);
+    
+    
+    
+    if(inSlot != 0)
+      close(inFile);
+    if(outSlot != 0)
+      close(outFile);
+  }
+  else{
+    if(inSlot != 0)
+      close(inFile);
+    if(outSlot != 0)
+      close(outFile);
+    
+  }
   
   else{
     sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
