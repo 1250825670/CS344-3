@@ -28,10 +28,12 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 
 //execute the user's command
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter){  
-  char printOutput[MAX_INPUT];
-  int i,file=-1;
+  char printOutput[MAX_INPUT], commandToRun[MAX_INPUT;
+  int i,file=-1,childPID;
   int outSlot=0,inSlot=0;
   memset(printOutput,'\0',sizeof(printOutput));
+  memset(commandToRun,'\0',sizeof(commandToRun));
+  strcpy(commandToRun,commandArguments[0]);
   if(strcmp(commandArguments[0],"status")==0){
     if(*exitVal == 0 || *exitVal == 1){
       sprintf(printOutput,"exit value %d\n",*exitVal);
@@ -50,8 +52,8 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
       chdir(commandArguments[1]);
     *exitVal = 0;
   }
-  else if(count > 1){
-    for(i=0;i<*count;i++){
+  else if(*counter > 1){
+    for(i=0;i<*counter;i++){
       if(strcmp(commandArguments[i],"<")==0){
         inSlot = i;
       }
@@ -62,26 +64,38 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
     if(inSlot != 0){
       file = open(commandArugments[inSlot+1],O_RDONLY);
       if(file == -1){
-        spritnf(printOutput,"cannot open %s\n",commandArguments[inSlot+1]);
+        spritnf(printOutput,"cannot open %s for input\n",commandArguments[inSlot+1]);
         print(pritnOutput);
         *exitVal = 1;
       }
     }
-    else if(outSlot != 0){
-      file = open(commandArguments[0],O_CREAT);
+    if(outSlot != 0){
+      file = open(commandArguments[outSlot+1],O_CREAT);
       if(file == -1){
-        spritnf(printOutput,"cannot open %s\n",commandArguments[0]);
+        spritnf(printOutput,"cannot open %s for output\n",commandArguments[outSlot+1]);
         print(pritnOutput);
         *exitVal = 1;
       }
     }
-    else{
-      sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
-      print(printOutput);
+    int minSlot = 0;
+    if(inSlot == 0)
+      min = outSlot;
+    else
+      min = inSlot;
+    if(min == 0){
+      min = *counter;
+    }
+    for(i=0;i<min;i++){
+      strcat(commandToRun," ");
+      strcat(commandToRun,commandArguments[i]);
     }
   }
+  
+  
+  
   else{
-    //standalone exec command
+    sprintf(printOutput,"%s: no such file or directory\n",commandArguments[0]);
+    print(printOutput);
   }
 }
 
