@@ -1,6 +1,3 @@
-//sstring to parse fgets data
-//use read/write for re-entrance?
-
 /* Sammy Pettinichi
  * CS344 - Operating Systems
  * Project 3 - smallsh
