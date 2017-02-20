@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 	ignore_action.sa_handler = SIG_IGN;
 	sigaction(SIGINT,&SIGINT_action,NULL);
 	sigaction(SIGTSTP,&SIGTSTP_action,NULL);
-	sigaction(SIGTERM,&ignore_action,NULL);
+	sigaction(SIGTERM,&SIGTERM_action,NULL);
 	sigaction(SIGHUP,&ignore_action,NULL);
 	sigaction(SIGQUIT,&ignore_action,NULL);
 	
