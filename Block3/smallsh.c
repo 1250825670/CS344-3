@@ -287,7 +287,8 @@ void freeAll(char** commandArguments,int *counter){
 void catchSigInt(int sigNum){	//kill child processes
 	int pid = getPID();
 	if(pid != parentPID){
-		kill(pid,SIGTERM);
+		//kill(pid,SIGTERM);
+		raise(SIGTERM);
 	}
 }
 void catchSigTSTP(int sigNum){	//block background processes
