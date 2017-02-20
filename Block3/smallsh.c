@@ -39,10 +39,12 @@ int main(int argc, char *argv[]){
 	
 	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, ignore_action = {0};
 	SIGINT_action.sa_handler = catchSigInt;
-	sigaddset(&SIGINT_action,SIGINT);
+	sigfillset(&SIGINT_action.sa_mask);
+	//sigaddset(&SIGINT_action.sa_mask,SIGINT);
 	SIGINT_action.sa_flags = 0;
 	SIGTSTP_action.sa_handler = catchSigTSTP;
-	sigaddset(&SIGTSTP_action,SIGTSTP);
+	sigfillset(&SIGTSTP_action.sa_mask);
+	//sigaddset(&SIGTSTP_action,SIGTSTP.sa_mask);
 	SIGTSTP_action.sa_flags = 0;
 	ignore_action.sa_handler = SIG_IGN;
 	
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]){
 	sigaction(SIGHUP,&ignore_action,NULL);
 	sigaction(SIGQUIT,&ignore_action,NULL);
 	
-	do{
+	while(1){
 		background = 0;
 		counter = 0;
 		commandArguments = getInput(&background,&counter);
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]){
 		}
 		checkChildren();
 		freeAll(commandArguments,&counter);
-	}while(1);
+	}
 }
 
 //checks for background process completion
@@ -280,10 +282,10 @@ void freeAll(char** commandArguments,int *counter){
 }
 
 //write codes: 0=stdin, 1=stdout, 2=stderr
-void catchSigInt(int sigNum){
+void catchSigInt(int sigNum){	//kill child processes
 	
 }
-void catchSigTSTP(int sigNum){
+void catchSigTSTP(int sigNum){	//block background processes
 	char* entering = "Entering foreground-only mode (& is now ignored)\n";
 	char* exiting = "Exiting foreground-only mode\n";
 	if(backgroundAllowed == 1){
