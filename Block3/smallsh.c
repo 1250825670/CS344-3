@@ -302,4 +302,6 @@ void catchSigTSTP(int sigNum){	//block background processes
 		write(1,exiting,30);
 	}
 	fflush(stdout);
+	print(": ");
+	fflush(stdout);
 }
