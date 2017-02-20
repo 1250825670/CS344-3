@@ -292,8 +292,8 @@ void catchSigInt(int sigNum){	//kill child processes
 	}
 }
 void catchSigTSTP(int sigNum){	//block background processes
-	char* entering = "Entering foreground-only mode (& is now ignored)\n";
-	char* exiting = "Exiting foreground-only mode\n";
+	char* entering = "\nEntering foreground-only mode (& is now ignored)\n";
+	char* exiting = "\nExiting foreground-only mode\n";
 	if(backgroundAllowed == 1){
 		backgroundAllowed = 0;
 		write(1,entering,50);
@@ -302,5 +302,6 @@ void catchSigTSTP(int sigNum){	//block background processes
 		backgroundAllowed = 1;
 		write(1,exiting,30);
 	}
+	write(1,"TSTP done\n",10);
 	fflush(stdout);
 }
