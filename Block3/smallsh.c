@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
 	char** commandArguments;
 	int exitVal,background,counter;
 	backgroundAllowed = 1;
-	parentPID = getPID();
+	parentPID = getpid();
 	
 	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, ignore_action = {0};
 	SIGINT_action.sa_handler = catchSigInt;
@@ -285,7 +285,7 @@ void freeAll(char** commandArguments,int *counter){
 
 //write codes: 0=stdin, 1=stdout, 2=stderr
 void catchSigInt(int sigNum){	//kill child processes
-	int pid = getPID();
+	int pid = getpid();
 	if(pid != parentPID){
 		//kill(pid,SIGTERM);
 		raise(SIGTERM);
