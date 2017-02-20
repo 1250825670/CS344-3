@@ -43,11 +43,11 @@ int main(int argc, char *argv[]){
 	SIGINT_action.sa_handler = catchSigInt;
 	sigfillset(&SIGINT_action.sa_mask);
 	//sigaddset(&SIGINT_action.sa_mask,SIGINT);
-	SIGINT_action.sa_flags = 0;
+	SIGINT_action.sa_flags = SA_RESTART;
 	SIGTSTP_action.sa_handler = catchSigTSTP;
 	sigfillset(&SIGTSTP_action.sa_mask);
 	//sigaddset(&SIGTSTP_action,SIGTSTP.sa_mask);
-	SIGTSTP_action.sa_flags = 0;
+	SIGTSTP_action.sa_flags = SA_RESTART;
 	ignore_action.sa_handler = SIG_IGN;
 	
 	sigaction(SIGINT,&SIGINT_action,NULL);
