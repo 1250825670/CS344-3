@@ -302,6 +302,6 @@ void catchSigTSTP(int sigNum){	//block background processes
 		backgroundAllowed = 1;
 		write(1,exiting,30);
 	}
-	write(1,"TSTP done\n",10);
 	fflush(stdout);
+	write(1,"TSTP done\n",10);
 }
