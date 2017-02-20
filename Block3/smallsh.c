@@ -188,7 +188,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 			close(inFile);
 		if(outSlot != 0)
 			close(outFile);
-		if(*background == 0 && backgroundAllowed == 1){
+		if(*background == 0 || backgroundAllowed == 0){
 			childPID = waitpid(childPID,&childExitMethod,0);
 			if(WIFEXITED(childExitMethod)){
 				*exitVal = WEXITSTATUS(childExitMethod);
