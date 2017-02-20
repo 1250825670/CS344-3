@@ -142,6 +142,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 				sprintf(printOutput,"cannot open %s for input\n",commandArguments[inSlot+1]);
 				print(printOutput);
 				*exitVal = 1;
+				return;
 			}
 		}
 		if(outSlot != 0){
@@ -151,6 +152,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 				sprintf(printOutput,"cannot open %s for output\n",commandArguments[outSlot+1]);
 				print(printOutput);
 				*exitVal = 1;
+				return;
 			}
 		}
 	}
