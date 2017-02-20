@@ -21,6 +21,7 @@
 #define MAX_COMMANDS 512
 
 int backgroundAllowed;
+int parentPID;
 
 //function declarations
 void print(char* text);
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]){
 	char** commandArguments;
 	int exitVal,background,counter;
 	backgroundAllowed = 1;
+	parentPID = getPID();
 	
 	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, ignore_action = {0};
 	SIGINT_action.sa_handler = catchSigInt;
@@ -283,7 +285,10 @@ void freeAll(char** commandArguments,int *counter){
 
 //write codes: 0=stdin, 1=stdout, 2=stderr
 void catchSigInt(int sigNum){	//kill child processes
-	
+	int pid = getPID();
+	if(pid != parentPID){
+		kill(pid,SIGTERM);
+	}
 }
 void catchSigTSTP(int sigNum){	//block background processes
 	char* entering = "Entering foreground-only mode (& is now ignored)\n";
