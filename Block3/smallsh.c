@@ -266,6 +266,8 @@ char** parseInput(char input[], int* background, int* counter){
 	if(strcmp(commandArguments[*counter-1],"&") == 0){
 		*background = 1;
 		strcpy(commandArguments[*counter-1],"\0");
+		*counter = *counter - 1;
+		
 	}
 	return commandArguments;
 }
@@ -289,6 +291,8 @@ void catchSigInt(int sigNum){	//kill child processes
 	if(pid != parentPID){
 		exit(sigNum);
 	}
+	print("\n: ");
+	fflush(stdout);
 }
 void catchSigTSTP(int sigNum){	//block background processes
 	char* entering = "\nEntering foreground-only mode (& is now ignored)\n";
