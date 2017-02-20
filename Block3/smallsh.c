@@ -287,8 +287,7 @@ void freeAll(char** commandArguments,int *counter){
 void catchSigInt(int sigNum){	//kill child processes
 	int pid = getpid();
 	if(pid != parentPID){
-		//kill(pid,SIGTERM);
-		raise(SIGTERM);
+		exit(sigNum);
 	}
 }
 void catchSigTSTP(int sigNum){	//block background processes
@@ -303,5 +302,4 @@ void catchSigTSTP(int sigNum){	//block background processes
 		write(1,exiting,30);
 	}
 	fflush(stdout);
-	write(1,"TSTP done\n",10);
 }
