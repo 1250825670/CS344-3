@@ -306,6 +306,7 @@ void catchSigTerm(int sigNum){
 	int pid = getpid();
 	char* message1 = "\nbackground pid ";
 	char* message2 = "is done: terminated by signal ";
+	write(1,"test\n",5);
 	if(pid != parentPID){
 		write(1,message1,16);
 		write(1,&pid,sizeof(int));
@@ -314,6 +315,7 @@ void catchSigTerm(int sigNum){
 		write(1,"\n: ",3);
 		exit(sigNum);
 	}
+	write(1,"test2\n",5);
 }
 void catchSigTSTP(int sigNum){	//block background processes
 	char* entering = "\nEntering foreground-only mode (& is now ignored)\n";
