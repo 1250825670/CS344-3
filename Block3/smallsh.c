@@ -20,6 +20,8 @@
 #define MAX_INPUT 2048
 #define MAX_COMMANDS 512
 
+int backgroundAllowed;
+
 //function declarations
 void print(char* text);
 char** getInput(int* background, int* counter);
@@ -27,10 +29,29 @@ char** parseInput(char input[], int* background, int* counter);
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter);
 void freeAll(char** commandArguments,int *counter);
 void checkChildren();
+void catchSigInt(int sigNum);
+void catchSigTSTP(int sigNum);
 
 int main(int argc, char *argv[]){
 	char** commandArguments;
 	int exitVal,background,counter;
+	backgroundAllowed = 1;
+	
+	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, ignore_action = {0};
+	SIGINT_action.sa_handler = catchSigInt;
+	sigaddset(&SIGINT_action,SIGINT);
+	SIGINT_action.sa_flags = 0;
+	SIGTSTP_action.sa_handler = catchSigTSTP;
+	sigaddset(&SIGTSTP_action,SIGTSTP);
+	SIGTSTP_action.sa_flags = 0;
+	ignore_action.sa_handler = SIG_IGN;
+	
+	sigaction(SIGINT,&SIGINT_action,NULL);
+	sigaction(SIGTSTP,&SIGTSTP_action,NULL);
+	sigaction(SIGTERM,&ignore_action,NULL);
+	sigaction(SIGHUP,&ignore_action,NULL);
+	sigaction(SIGQUIT,&ignore_action,NULL);
+	
 	do{
 		background = 0;
 		counter = 0;
@@ -163,7 +184,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 			close(inFile);
 		if(outSlot != 0)
 			close(outFile);
-		if(*background == 0){
+		if(*background == 0 && backgroundAllowed == 1){
 			childPID = waitpid(childPID,&childExitMethod,0);
 			if(WIFEXITED(childExitMethod)){
 				*exitVal = WEXITSTATUS(childExitMethod);
@@ -245,7 +266,6 @@ char** parseInput(char input[], int* background, int* counter){
 	return commandArguments;
 }
 
-//write codes: 0=stdin, 1=stdout, 2=stderr
 void print(char* text){
 	fflush(stdout);
 	printf(text);
@@ -257,4 +277,22 @@ void freeAll(char** commandArguments,int *counter){
 	for(i=0;i<*counter;i++)
 		free(commandArguments[i]);
 	free(commandArguments);
+}
+
+//write codes: 0=stdin, 1=stdout, 2=stderr
+void catchSigInt(int sigNum){
+	
+}
+void catchSigTSTP(int sigNum){
+	char* entering = "Entering foreground-only mode (& is now ignored)\n";
+	char* exiting = "Exiting foreground-only mode\n";
+	if(backgroundAllowed == 1){
+		backgroundAllowed = 0;
+		write(1,entering,50);
+	}
+	else{
+		backgroundAllowed = 1;
+		write(1,exiting,30);
+	}
+	fflush(stdout);
 }
