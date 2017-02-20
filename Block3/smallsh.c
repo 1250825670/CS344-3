@@ -32,6 +32,7 @@ void freeAll(char** commandArguments,int *counter);
 void checkChildren();
 void catchSigInt(int sigNum);
 void catchSigTSTP(int sigNum);
+void catchSigTerm(int sigNum);
 
 int main(int argc, char *argv[]){
 	char** commandArguments;
@@ -39,15 +40,16 @@ int main(int argc, char *argv[]){
 	backgroundAllowed = 1;
 	parentPID = getpid();
 	
-	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, ignore_action = {0};
+	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, SIGTERM_action = {0}, ignore_action = {0};
 	SIGINT_action.sa_handler = catchSigInt;
 	sigfillset(&SIGINT_action.sa_mask);
-	//sigaddset(&SIGINT_action.sa_mask,SIGINT);
 	SIGINT_action.sa_flags = SA_RESTART;
 	SIGTSTP_action.sa_handler = catchSigTSTP;
 	sigfillset(&SIGTSTP_action.sa_mask);
-	//sigaddset(&SIGTSTP_action,SIGTSTP.sa_mask);
 	SIGTSTP_action.sa_flags = SA_RESTART;
+	SIGTERM_action.sa_handler = catchSigTerm;
+	sigfillset(&SIGTERM_action.sa_mask);
+	SIGTERM_action.sa_flags = SA_RESTART;
 	ignore_action.sa_handler = SIG_IGN;
 	
 	sigaction(SIGINT,&SIGINT_action,NULL);
@@ -293,8 +295,21 @@ void catchSigInt(int sigNum){	//kill child processes
 	if(pid != parentPID){
 		exit(sigNum);
 	}
-	print("\n: ");
+	write(1,"\n: ",3);
 	fflush(stdout);
+}
+void catchSigTerm(int sigNum){
+	int pid = getpid();
+	char* message1 = "\nbackground pid ";
+	char* message2 = "is done: terminated by signal ";
+	if(pid != parentPID){
+		write(1,message1,16);
+		write(1,pid,sizeof(int));
+		write(1,message2,30);
+		write(1,sigNum,sizeof(int));
+		write(1,"\n: ",3);
+		exit(sigNum);
+	}
 }
 void catchSigTSTP(int sigNum){	//block background processes
 	char* entering = "\nEntering foreground-only mode (& is now ignored)\n";
@@ -308,6 +323,6 @@ void catchSigTSTP(int sigNum){	//block background processes
 		write(1,exiting,30);
 	}
 	fflush(stdout);
-	print(": ");
+	write(1,": ",2);
 	fflush(stdout);
 }
