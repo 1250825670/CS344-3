@@ -304,9 +304,9 @@ void catchSigTerm(int sigNum){
 	char* message2 = "is done: terminated by signal ";
 	if(pid != parentPID){
 		write(1,message1,16);
-		write(1,(void *)pid,sizeof(int));
+		write(1,&pid,sizeof(int));
 		write(1,message2,30);
-		write(1,(void *)sigNum,sizeof(int));
+		write(1,&sigNum,sizeof(int));
 		write(1,"\n: ",3);
 		exit(sigNum);
 	}
