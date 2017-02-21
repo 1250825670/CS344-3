@@ -257,7 +257,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	memset(input,'\0',sizeof(input));
 	print(": ");
 	fflush(stdin);
-	while(count < MAX_INPUT){
+	/*while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
 		write(1,&c,1);
@@ -276,7 +276,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
 						fputc(commHist->commandList[histSlot][i],stdin);
 					}*/
-				}
+				/*}
 				else if(c == 66 && histSlot < commHist->size){
 					histSlot++;
 					fflush(stdin);
@@ -287,7 +287,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
 						fputc(commHist->commandList[histSlot][i],stdin);
 					}*/
-				}
+				/*}
 			}
 		}
 		else if(c == 8){
@@ -301,8 +301,8 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 			count++;
 		}
 	}
-	input[count] = '\0';
-	//fgets(input,sizeof(input),stdin);
+	input[count] = '\0';*/
+	fgets(input,sizeof(input),stdin);
 	if(commHist->size == commHist->maxSize){
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
