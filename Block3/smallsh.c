@@ -258,13 +258,16 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	print(": ");
 	fflush(stdin);
 	while(count < MAX_INPUT){
-		c = getchar();//stdin);
+		//c = getchar();
+		c = fgetc(stdin);
 		if(c == EOF || c == '\n')
 			break;
 		if(c == 27){
-			c = getchar();
+			//c = getchar();
+			c = fgetc(stdin);
 			if(c == 91){
-				c = getchar();
+				//c = getchar();
+				c = fgetc(stdin);
 				if(c == 65 && histSlot > 0){
 					histSlot--;
 					fflush(stdin);
