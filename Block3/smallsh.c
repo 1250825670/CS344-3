@@ -49,7 +49,7 @@ struct CommandHistory* initializeHistory(){
 }
 void quitShell(struct CommandHistory *commHist){
 	int i;
-	int hist_file = open(".smallsh_history", O_WRONLY | O_CREAT | O_APPEND);
+	int hist_file = open(".smallsh_history", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
 	
 	for(i=0;i<commHist->size;i++){
 		write(hist_file,commHist->commandList[i],strlen(commHist->commandList[i]));
