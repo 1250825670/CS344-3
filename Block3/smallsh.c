@@ -24,7 +24,7 @@ struct CommandHistory {
 	char** commandList;
 	int size;
 	int maxSize;
-}
+};
 
 //function declarations
 void print(char* text);
