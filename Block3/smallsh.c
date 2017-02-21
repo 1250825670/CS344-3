@@ -310,7 +310,8 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 		commHist = realloc(commHist, commHist->maxSize);
 	}
 	print("realloc\n");
-	commHist->commandList[commHist->size] = (char *)malloc(strlen(input));
+	commHist->commandList[commHist->size] = (char *)malloc(sizeof(input));
+	print("malloc\n");
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
 	print("input done\n");
