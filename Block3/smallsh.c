@@ -252,8 +252,8 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 //request command input from the user
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char input[MAX_INPUT];
-	//char c;
-	int c, i, count = 0, histSlot = commHist->size;
+	char c;
+	int i, count = 0, histSlot = commHist->size;
 	memset(input,'\0',sizeof(input));
 	print(": ");
 	fflush(stdin);
