@@ -41,7 +41,8 @@ struct CommandHistory* initializeHistory();
 void addToHistory(struct CommandHistory *commHist);
 
 struct CommandHistory* initializeHistory(){
-	struct CommandHistory *commandHistory = malloc(sizeof(char *) * MAX_COMMANDS);
+	struct CommandHistory *commandHistory = malloc(sizeof(struct CommandHistory));
+	commandHistory->commandList = malloc(sizeof(char *) * MAX_COMMANDS);
 	commandHistory->size = 0;
 	commandHistory->maxSize = MAX_COMMANDS;
 	return commandHistory;
