@@ -94,6 +94,7 @@ int main(int argc, char *argv[]){
 		background = 0;
 		counter = 0;
 		commandArguments = getInput(&background,&counter,commHist);
+		print("input parsed\n");
 		if(counter > 0 && strcmp(commandArguments[0],"exit") == 0){
 			print("exit\n");
 			quitShell(commHist);
@@ -309,7 +310,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	}
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
-	
+	print("input received\n");
 	return parseInput(input,background,counter);
 }
 
