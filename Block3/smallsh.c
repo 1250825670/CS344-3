@@ -51,7 +51,8 @@ void quitShell(struct CommandHistory *commHist){
 	int hist_file = open(".smallsh_history", O_WRONLY | O_APPEND);
 	
 	for(i=0;i<commHist->size;i++){
-		fprintf(hist_file,"%s",commHist->commandList[i]);
+		write(hist_file,commhist->commandList[i],strlen(commhist->commandList[i]));
+		//fprintf(hist_file,"%s",commHist->commandList[i]);
 		free(commHist->commandList[i]);
 	}
 	close(hist_file);
