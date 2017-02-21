@@ -304,13 +304,16 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	}
 	input[count] = '\0';*/
 	fgets(input,sizeof(input),stdin);
+	print("input received\n");
 	if(commHist->size == commHist->maxSize){
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
 	}
+	print("realloc\n");
+	commhist->commandList[commHist->size] = malloc(sizeof(char *) * strlen(input));
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
-	print("input received\n");
+	print("input done\n");
 	return parseInput(input,background,counter);
 }
 
