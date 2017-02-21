@@ -20,6 +20,12 @@
 int backgroundAllowed;
 int parentPID;
 
+struct CommandHistory {
+	char** commandList;
+	int size;
+	int maxSize;
+}
+
 //function declarations
 void print(char* text);
 char** getInput(int* background, int* counter);
@@ -30,12 +36,35 @@ void checkChildren();
 void catchSigInt(int sigNum);
 void catchSigTSTP(int sigNum);
 void catchSigTerm(int sigNum);
+void quitShell(char** allCommands);
+char** initializeHistory();
+void addToHistory(struct CommandHistory *commHist);
+
+char** initializeHistory(){
+	struct CommandHistory *commandHistory = malloc(sizeof(char *) * MAX_COMMANDS);
+	commandHistory.size = 0;
+	commandHistory.maxSize = MAX_COMMANDS;
+	return commandHistory;
+}
+void quitShell(struct CommandHistory *commHist){
+	int i;
+	int hist_file = open(".smallsh_history", O_WRONLY | O_APPEND);
+	
+	for(i=0;0<commHist.size;i++){
+		fpritnf(hist_file,"%s",commHist->commandList[i]);
+		free(commHist->commandList[i];
+	}
+	close(hist_file);
+	free(commHist);
+	quit(0);
+}
 
 int main(int argc, char *argv[]){
 	char** commandArguments;
 	int exitVal,background,counter;
 	backgroundAllowed = 1;
 	parentPID = getpid();
+	struct CommandHistory *commHist = initializeHistory();
 	
 	//declare signal handlers
 	struct sigaction SIGINT_action = {0}, SIGTSTP_action = {0}, SIGTERM_action = {0}, ignore_action = {0};
@@ -53,6 +82,7 @@ int main(int argc, char *argv[]){
 	SIGTERM_action.sa_flags = SA_RESTART;
 	//signal ignore
 	ignore_action.sa_handler = SIG_IGN;
+	//initialize
 	sigaction(SIGINT,&SIGINT_action,NULL);
 	sigaction(SIGTSTP,&SIGTSTP_action,NULL);
 	sigaction(SIGTERM,&SIGTERM_action,NULL);
@@ -62,7 +92,7 @@ int main(int argc, char *argv[]){
 	while(1){
 		background = 0;
 		counter = 0;
-		commandArguments = getInput(&background,&counter);
+		commandArguments = getInput(&background,&counter,commHist);
 		if(counter > 0 && strcmp(commandArguments[0],"exit") == 0){
 			print("exit\n");
 			exit(0);
@@ -167,14 +197,21 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 		exit(1);
 	}
 	else if(childPID == 0){
+		int dev_null = open("/dev/null",O_RDWR);
 		int min = 0;
 		if(outSlot != 0){
 			dup2(outFile,1);
 			min = outSlot;
 		}
+		else if(*background == 1 && backgroundAllowed == 1){
+			dup2(dev_null,1);
+		}
 		if(inSlot != 0){
 			dup2(inFile,0);
 			min = inSlot;
+		}
+		else if(*background == 1 && backgroundAllowed == 1){
+			dup2(dev_null,0);
 		}
 		if(min == 0){
 			min = *counter;
@@ -211,12 +248,18 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 }
 
 //request command input from the user
-char** getInput(int* background, int* counter){
+char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char input[MAX_INPUT];
 	memset(input,'\0',sizeof(input));
 	print(": ");
 	fflush(stdin);
 	fgets(input,sizeof(input),stdin);
+	if(commHist->size == commHist->maxSize){
+		commHist->maxSize = commHist->maxSize * 2;
+		realloc(commHist, commHist->maxSize;
+	}
+	strcpy(commHist->commandList[commHist->size],input);
+	commHist->size++;
 	
 	return parseInput(input,background,counter);
 }
@@ -283,7 +326,7 @@ void print(char* text){
 	fflush(stdout);
 }
 
-void freeAll(char** commandArguments,int *counter){
+void freeAll(char** commandArguments,int *counter, struct CommandHistory commHist){
 	int i;
 	for(i=0;i<*counter;i++)
 		free(commandArguments[i]);
