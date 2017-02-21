@@ -260,6 +260,8 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
+		fputc(c,stdout);
+		fputc(c,stdin);
 		if(c == EOF || c == '\n')
 			break;
 		if(c == 27){
