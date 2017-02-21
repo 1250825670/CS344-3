@@ -28,7 +28,7 @@ struct CommandHistory {
 
 //function declarations
 void print(char* text);
-char** getInput(int* background, int* counter);
+char** getInput(int* background, int* counter, struct CommandHistory *commHist);
 char** parseInput(char input[], int* background, int* counter);
 void executeCommand(char** commandArguments, int* exitVal, int* background, int* counter);
 void freeAll(char** commandArguments,int *counter);
@@ -36,11 +36,11 @@ void checkChildren();
 void catchSigInt(int sigNum);
 void catchSigTSTP(int sigNum);
 void catchSigTerm(int sigNum);
-void quitShell(char** allCommands);
-char** initializeHistory();
+void quitShell(struct CommandHistory *commHist);
+struct CommandHistory* initializeHistory();
 void addToHistory(struct CommandHistory *commHist);
 
-char** initializeHistory(){
+struct CommandHistory* initializeHistory(){
 	struct CommandHistory *commandHistory = malloc(sizeof(char *) * MAX_COMMANDS);
 	commandHistory->size = 0;
 	commandHistory->maxSize = MAX_COMMANDS;
@@ -50,9 +50,9 @@ void quitShell(struct CommandHistory *commHist){
 	int i;
 	int hist_file = open(".smallsh_history", O_WRONLY | O_APPEND);
 	
-	for(i=0;0<commHist.size;i++){
+	for(i=0;i<commHist->size;i++){
 		fpritnf(hist_file,"%s",commHist->commandList[i]);
-		free(commHist->commandList[i];
+		free(commHist->commandList[i]);
 	}
 	close(hist_file);
 	free(commHist);
@@ -299,7 +299,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	//fgets(input,sizeof(input),stdin);
 	if(commHist->size == commHist->maxSize){
 		commHist->maxSize = commHist->maxSize * 2;
-		realloc(commHist, commHist->maxSize;
+		commHist = realloc(commHist, commHist->maxSize;
 	}
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
@@ -369,7 +369,7 @@ void print(char* text){
 	fflush(stdout);
 }
 
-void freeAll(char** commandArguments,int *counter, struct CommandHistory commHist){
+void freeAll(char** commandArguments,int *counter){
 	int i;
 	for(i=0;i<*counter;i++)
 		free(commandArguments[i]);
