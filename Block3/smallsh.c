@@ -53,10 +53,10 @@ void quitShell(struct CommandHistory *commHist){
 	
 	for(i=0;i<commHist->size;i++){
 		write(hist_file,commHist->commandList[i],strlen(commHist->commandList[i]));
-		//fprintf(hist_file,"%s",commHist->commandList[i]);
 		free(commHist->commandList[i]);
 	}
 	close(hist_file);
+	free(commHist->commandList);
 	free(commHist);
 	exit(0);
 }
@@ -310,12 +310,9 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
 	}
-	print("realloc\n");
 	commHist->commandList[commHist->size] = (char *)malloc(sizeof(char *) * strlen(input));
-	print("malloc\n");
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
-	print("input done\n");
 	return parseInput(input,background,counter);
 }
 
