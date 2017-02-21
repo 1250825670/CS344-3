@@ -299,7 +299,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	//fgets(input,sizeof(input),stdin);
 	if(commHist->size == commHist->maxSize){
 		commHist->maxSize = commHist->maxSize * 2;
-		commHist = realloc(commHist, commHist->maxSize;
+		commHist = realloc(commHist, commHist->maxSize);
 	}
 	strcpy(commHist->commandList[commHist->size],input);
 	commHist->size++;
