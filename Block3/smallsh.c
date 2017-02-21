@@ -250,10 +250,53 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 //request command input from the user
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char input[MAX_INPUT];
+	//char c;
+	int c, i, count = 0, histSlot = commHist->size;
 	memset(input,'\0',sizeof(input));
 	print(": ");
 	fflush(stdin);
-	fgets(input,sizeof(input),stdin);
+	while(count < MAX_INPUT){
+		c = getchar();//stdin);
+		if(c == EOF || c == '\n')
+			break;
+		if(c == 27){
+			c = getchar();
+			if(c == 91){
+				c = getchar();
+				if(c == 65 && histSlot > 0){
+					histSlot--;
+					fflush(stdin);
+					fputs(commHist->commandList[histSlot],stdin);
+					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
+						fputc(commHist->commandList[histSlot][i],stdin);
+					}*/
+				}
+				else if(c == 66 && histSlot < commHist->size){
+					histSlot++;
+					fflush(stdin);
+					if(histSlot == commHist->size - 1)
+						fputs(input,stdin);
+					else
+						fputs(commHist->commandList[histSlot],stdin);
+					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
+						fputc(commHist->commandList[histSlot][i],stdin);
+					}*/
+				}
+			}
+		}
+		else if(c == 8){
+			fflush(stdin);
+			count--;
+			input[count] = '\0';
+			fputs(input,stdin);
+		}
+		else{
+			input[count] = c;
+			count++;
+		}
+	}
+	input[count] = '\0';
+	//fgets(input,sizeof(input),stdin);
 	if(commHist->size == commHist->maxSize){
 		commHist->maxSize = commHist->maxSize * 2;
 		realloc(commHist, commHist->maxSize;
