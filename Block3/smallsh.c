@@ -51,12 +51,12 @@ void quitShell(struct CommandHistory *commHist){
 	int hist_file = open(".smallsh_history", O_WRONLY | O_APPEND);
 	
 	for(i=0;i<commHist->size;i++){
-		fpritnf(hist_file,"%s",commHist->commandList[i]);
+		fprintf(hist_file,"%s",commHist->commandList[i]);
 		free(commHist->commandList[i]);
 	}
 	close(hist_file);
 	free(commHist);
-	quit(0);
+	exit(0);
 }
 
 int main(int argc, char *argv[]){
@@ -95,7 +95,8 @@ int main(int argc, char *argv[]){
 		commandArguments = getInput(&background,&counter,commHist);
 		if(counter > 0 && strcmp(commandArguments[0],"exit") == 0){
 			print("exit\n");
-			exit(0);
+			quitShell(commHist);
+			//exit(0);
 		}
 		else if(counter != 0){
 			executeCommand(commandArguments, &exitVal, &background,&counter);
