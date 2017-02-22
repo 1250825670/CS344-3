@@ -3,7 +3,7 @@
 echo "Pre-script Info"
 echo "PID: $$"
 
-./smallsh <<___EOF___
+./smallsh <<'___EOF___'
 echo BEGINNING TEST SCRIPT
 echo
 echo --------------------
