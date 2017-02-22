@@ -1,2 +1,2 @@
 Compile using
-gcc -o smallsh smallsh.c
+gcc -o smallsh smallsh.c -lreadline
