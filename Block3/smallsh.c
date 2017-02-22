@@ -258,13 +258,16 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 
 //request command input from the user
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
-	//char input[MAX_INPUT];
-	//memset(input,'\0',sizeof(input));
-	char* input;
+	char input[MAX_INPUT];
+	memset(input,'\0',sizeof(input));
+	//char* input;
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
-	//print(": ");	//prints colon to indicate awaiting user input
-	//fflush(stdin);
+	print(": ");	//prints colon to indicate awaiting user input
+	fflush(stdin);
+	fgets(input,sizeof(input),stdin);	//read user input from stdin
+	//input = readline(": ");
+	//add_history(input);
 	/*while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
@@ -310,9 +313,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 		}
 	}
 	input[count] = '\0';*/
-	//fgets(input,sizeof(input),stdin);	//read user input from stdin
-	input = readline(": ");
-	add_history(input);
 	if(commHist->size == commHist->maxSize){	//if the size is as big as maxsize, reallocate more memory
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
