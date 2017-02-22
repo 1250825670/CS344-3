@@ -311,7 +311,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	}
 	input[count] = '\0';*/
 	//fgets(input,sizeof(input),stdin);	//read user input from stdin
-	input = '\0';
 	input = readline(": ");
 	add_history(input);
 	if(commHist->size == commHist->maxSize){	//if the size is as big as maxsize, reallocate more memory
@@ -332,7 +331,7 @@ char** parseInput(char input[], int* background, int* counter){
 	memset(commandArguments,'\0',sizeof(commandArguments));
 	memset(command,'\0',sizeof(command));
 	char *c = input;
-	if(*c == '#' || *c == ' ' || *c == '\t' || *c == '\0' || strlen(input) == 1){	//checks if input is a comment or blank space
+	if(*c == '#' || *c == ' ' || *c == '\t' || *c == '\0' || strlen(input) <= 1){	//checks if input is a comment or blank space
 		return commandArguments;
 	}
 	strcpy(command, input);	//copies input to be chopped up my strtok
