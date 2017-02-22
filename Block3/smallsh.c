@@ -259,10 +259,10 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 //request command input from the user
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	//char input[MAX_INPUT];
+	//memset(input,'\0',sizeof(input));
 	char* input;
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
-	memset(input,'\0',sizeof(input));
 	//print(": ");	//prints colon to indicate awaiting user input
 	//fflush(stdin);
 	/*while(count < MAX_INPUT){
