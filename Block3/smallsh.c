@@ -264,7 +264,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	//print(": ");	//prints colon to indicate awaiting user input
-	fflush(stdin);
+	//fflush(stdin);
 	//fgets(input,sizeof(input),stdin);	//read user input from stdin
 	input = readline(": ");
 	add_history(input);
