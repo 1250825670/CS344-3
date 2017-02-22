@@ -324,7 +324,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 }
 
 //parse the input into an array for easier access
-char** parseInput(char input[], int* background, int* counter){
+char** parseInput(char* input, int* background, int* counter){
 	char** commandArguments = malloc(sizeof(char *) * MAX_COMMANDS);	//create array to hold all commands
 	char command[MAX_INPUT];
 	char* token;
@@ -374,6 +374,7 @@ char** parseInput(char input[], int* background, int* counter){
 		*counter = *counter - 1;	//decrements counter
 		
 	}
+	free(input);
 	return commandArguments;	//returns command array
 }
 
