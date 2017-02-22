@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 //define constants
 #define MAX_INPUT 2048
@@ -260,8 +262,8 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	memset(input,'\0',sizeof(input));
-	print(": ");	//prints colon to indicate awaiting user input
-	fflush(stdin);
+	//print(": ");	//prints colon to indicate awaiting user input
+	//fflush(stdin);
 	/*while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
@@ -307,7 +309,9 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 		}
 	}
 	input[count] = '\0';*/
-	fgets(input,sizeof(input),stdin);	//read user input from stdin
+	//fgets(input,sizeof(input),stdin);	//read user input from stdin
+	input = readline(": ");
+	add_history(input);
 	if(commHist->size == commHist->maxSize){	//if the size is as big as maxsize, reallocate more memory
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
