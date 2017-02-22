@@ -260,7 +260,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	//char input[MAX_INPUT];
 	//memset(input,'\0',sizeof(input));
-	char* input;
+	char* input = '\0';
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	//print(": ");	//prints colon to indicate awaiting user input
@@ -331,7 +331,7 @@ char** parseInput(char input[], int* background, int* counter){
 	memset(commandArguments,'\0',sizeof(commandArguments));
 	memset(command,'\0',sizeof(command));
 	char *c = input;
-	if(*c == '#' || *c == ' ' || *c == '\t' || strlen(input) == 1){	//checks if input is a comment or blank space
+	if(*c == '#' || *c == ' ' || *c == '\t' || *c == '\0' || strlen(input) == 1){	//checks if input is a comment or blank space
 		return commandArguments;
 	}
 	strcpy(command, input);	//copies input to be chopped up my strtok
