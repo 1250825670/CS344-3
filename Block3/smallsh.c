@@ -256,18 +256,10 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 	}
 }
 
-//request command input from the user
-char** getInput(int* background, int* counter, struct CommandHistory *commHist){
-	//char input[MAX_INPUT];
-	//memset(input,'\0',sizeof(input));
-	char* input;
+void advancedParsing(char* input){
+	int count = 0;
 	char c;
-	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
-	//print(": ");	//prints colon to indicate awaiting user input
-	//fgets(input,sizeof(input),stdin);	//read user input from stdin
-	input = readline(": ");
-	add_history(input);
-	/*while(count < MAX_INPUT){
+	while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
 		write(1,&c,1);
@@ -285,7 +277,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
 						fputc(commHist->commandList[histSlot][i],stdin);
 					}*/
-				/*}
+				}
 				else if(c == 66 && histSlot < commHist->size){
 					histSlot++;
 					if(histSlot == commHist->size - 1)
@@ -295,7 +287,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
 						fputc(commHist->commandList[histSlot][i],stdin);
 					}*/
-				/*}
+				}
 			}
 		}
 		else if(c == 8){
@@ -308,7 +300,24 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 			count++;
 		}
 	}
-	input[count] = '\0';*/
+	input[count] = '\0';
+}
+
+//request command input from the user
+char** getInput(int* background, int* counter, struct CommandHistory *commHist){
+	char input[MAX_INPUT];
+	memset(input,'\0',sizeof(input));
+	int i, histSlot = commHist->size;	//sets history slot to begin at the commandList size
+	print(": ");	//prints colon to indicate awaiting user input
+	fflush(stdout);
+	fgets(input,sizeof(input),stdin);	//read user input from stdin
+	
+	/*char* input;	//implementing readline()
+	input = readline(": ");
+	add_history(input);*/
+	
+	//advancedParsing(input);
+	
 	if(commHist->size == commHist->maxSize){	//if the size is as big as maxsize, reallocate more memory
 		commHist->maxSize = commHist->maxSize * 2;
 		commHist = realloc(commHist, commHist->maxSize);
