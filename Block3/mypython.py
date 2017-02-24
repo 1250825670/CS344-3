@@ -23,6 +23,11 @@ for i in range(10):
   f2.write(random.choice(string.ascii_lowercase))
   f3.write(random.choice(string.ascii_lowercase))
 
+#add newlines
+f1.write("\n")
+f2.write("\n")
+f3.write("\n")
+
 #close files
 f1.close
 f2.close
@@ -34,9 +39,9 @@ f2 = open(file2,"r")
 f3 = open(file3,"r")
 
 #print contents of files
-print(f1.read())
-print(f2.read())
-print(f3.read())
+print(f1.read(),end="")
+print(f2.read(),end="")
+print(f3.read(),end="")
 
 #close files
 f1.close
