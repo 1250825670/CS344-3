@@ -264,7 +264,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char c;
 	int i, count = 0, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	//print(": ");	//prints colon to indicate awaiting user input
-	//fflush(stdin);
 	//fgets(input,sizeof(input),stdin);	//read user input from stdin
 	input = readline(": ");
 	add_history(input);
@@ -282,7 +281,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 				c = fgetc(stdin);
 				if(c == 65 && histSlot > 0){
 					histSlot--;
-					fflush(stdin);
 					fputs(commHist->commandList[histSlot],stdin);
 					/*for(i=0;i<strlen(commHist->commandList[histSlot]);i++){
 						fputc(commHist->commandList[histSlot][i],stdin);
@@ -290,7 +288,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 				/*}
 				else if(c == 66 && histSlot < commHist->size){
 					histSlot++;
-					fflush(stdin);
 					if(histSlot == commHist->size - 1)
 						fputs(input,stdin);
 					else
@@ -302,7 +299,6 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 			}
 		}
 		else if(c == 8){
-			fflush(stdin);
 			count--;
 			input[count] = '\0';
 			fputs(input,stdin);
