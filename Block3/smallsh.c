@@ -256,9 +256,10 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 	}
 }
 
-void advancedParsing(char* input){
+void advancedParsing(char* input, struct CommandHistory *commHist){
 	int count = 0;
 	char c;
+	int i, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	while(count < MAX_INPUT){
 		//c = getchar();
 		c = fgetc(stdin);
@@ -307,7 +308,6 @@ void advancedParsing(char* input){
 char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	char input[MAX_INPUT];
 	memset(input,'\0',sizeof(input));
-	int i, histSlot = commHist->size;	//sets history slot to begin at the commandList size
 	print(": ");	//prints colon to indicate awaiting user input
 	fflush(stdout);
 	fgets(input,sizeof(input),stdin);	//read user input from stdin
@@ -316,7 +316,7 @@ char** getInput(int* background, int* counter, struct CommandHistory *commHist){
 	input = readline(": ");
 	add_history(input);*/
 	
-	//advancedParsing(input);
+	//advancedParsing(input, commHist);
 	
 	if(commHist->size == commHist->maxSize){	//if the size is as big as maxsize, reallocate more memory
 		commHist->maxSize = commHist->maxSize * 2;
@@ -379,7 +379,7 @@ char** parseInput(char* input, int* background, int* counter){
 		*counter = *counter - 1;	//decrements counter
 		
 	}
-	free(input);
+	//free(input);
 	return commandArguments;	//returns command array
 }
 
