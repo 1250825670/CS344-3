@@ -208,7 +208,7 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 		exit(1);
 	}
 	else if(childPID == 0){	//if this is the child
-		if(*background == 1 && backgroundAllowd == 1)
+		if(*background == 1 && backgroundAllowed == 1)
 			isBackground = 1;
 		int dev_null = open("/dev/null",O_RDWR);	//opens /dev/null for read and write
 		int min = 0;
