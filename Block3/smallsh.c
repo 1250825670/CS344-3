@@ -22,6 +22,7 @@
 //declare global variables
 int backgroundAllowed;
 int parentPID;
+int isBackground;
 
 //struct to hold the user's input history
 struct CommandHistory {
@@ -99,6 +100,7 @@ int main(int argc, char *argv[]){
 	
 	while(1){
 		background = 0;	//resets whether its a background command
+		isBackground = 0;
 		counter = 0;	//resets counter for input length
 		commandArguments = getInput(&background,&counter,commHist);	//gets input from user and parses into an array
 		if(counter > 0 && strcmp(commandArguments[0],"exit") == 0){	//checks if user wants to exit
@@ -206,6 +208,8 @@ void executeCommand(char** commandArguments, int* exitVal, int* background, int*
 		exit(1);
 	}
 	else if(childPID == 0){	//if this is the child
+		if(*background == 1 && backgroundAllowd == 1)
+			isBackground = 1;
 		int dev_null = open("/dev/null",O_RDWR);	//opens /dev/null for read and write
 		int min = 0;
 		if(outSlot != 0){
@@ -401,7 +405,7 @@ void freeAll(char** commandArguments,int *counter){
 //write codes: 0=stdin, 1=stdout, 2=stderr
 void catchSigInt(int sigNum){
 	int pid = getpid();
-	if(pid != parentPID){	//only kills the child processes
+	if(pid != parentPID && isBackground != 1){	//only kills the child processes
 		exit(sigNum);	//exits with signal number
 	}
 	write(1,"\n: ",3);
