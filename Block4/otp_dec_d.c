@@ -6,13 +6,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define MAX_LENGTH 70001
+#define MAX_LENGTH 70005
 
 void decryptMessage(int);
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
 int main(int argc, char *argv[]){
-	int listenSocketFD, establishedConnectionFD, portNumber, charsRead, childID, childExitMethod;
+	int listenSocketFD, establishedConnectionFD, portNumber, charsRead, childPID, childExitMethod;
 	socklen_t sizeOfClientInfo;
 	struct sockaddr_in serverAddress, clientAddress;
 	
@@ -43,6 +43,7 @@ int main(int argc, char *argv[]){
 		decryptMessage(establishedConnectionFD);
 		while((childPID = waitpid(-1,&childExitMethod,WNOHANG)) > 0){}
 	}
+	
 	close(establishedConnectionFD); // Close the existing socket which is connected to the client
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
@@ -50,46 +51,58 @@ int main(int argc, char *argv[]){
 
 void decryptMessage(int establishedConnectionFD){
 	int childPID = fork();
-	if(childID < 0) error("fork failed");
-	else if (childID == 0){	//this is the child
+	if(childPID < 0) error("fork failed");
+	else if (childPID == 0){	//this is the child
+		char* END = "tuna";
 		int charsRead, i, textLength;
-		char buffer[MAX_LENGTH], plaintext[MAX_LENGTH], key[MAX_LENGTH], ciphertext[MAX_LENGTH];
-		memset(buffer, '\0', sizeof(buffer));
-		memset(plaintext, '\0', sizeof(plaintext));
-		memset(key, '\0', sizeof(key));
+		char buffer[MAX_LENGTH], ciphertext[MAX_LENGTH], key[MAX_LENGTH], plaintext[MAX_LENGTH];
 		memset(ciphertext, '\0', sizeof(ciphertext));
+		memset(key, '\0', sizeof(key));
+		memset(plaintext, '\0', sizeof(plaintext));
 		
-		charsRead = recv(establishedConnectionFD, buffer, MAX_LENGTH-1, 0); //Get the name of the connecting program
+		memset(buffer, '\0', sizeof(buffer));
+		charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0); //Get the name of the connecting program
 		if (charsRead < 0) error("ERROR reading from socket");
-		
-		if(strcmp(buffer,"otp_enc") == 0) send(establishedConnectionFD, "ACCEPTED", 8, 0); // Send success back if opt_enc is connecting
+		if(strcmp(buffer,"otp_dec") == 0) send(establishedConnectionFD, "ACCEPTED", 8, 0); // Send success back if opt_enc is connecting
 		else send(establishedConnectionFD, "REJECTED", 8, 0); // Send rejection back for anyone else
 		
-		memset(buffer, '\0', sizeof(buffer));
-		charsRead = recv(establishedConnectionFD, buffer, MAX_LENGTH-1, 0); //Obtain the key
-		if (charsRead < 0) error("ERROR reading from socket");
-		strcpy(key,buffer);
-		
-		charsRead = send(establishedConnectionFD, "key received", 12, 0); // Send success back
+		do{
+			memset(buffer, '\0', sizeof(buffer));
+			charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0); //Obtain the key
+			if (charsRead < 0) error("ERROR reading from socket");
+			strcat(key,buffer);
+		}while(strstr(key,END)==NULL);
+		charsRead = send(establishedConnectionFD, "ACK", 3, 0); // Send success back
 		if (charsRead < 0) error("ERROR writing to socket");
 		
-		memset(buffer, '\0', sizeof(buffer));
-		charsRead = recv(establishedConnectionFD, buffer, MAX_LENGTH-1, 0); //Obtain the original text
-		if (charsRead < 0) error("ERROR reading from socket");
-		strcpy(ciphertext,buffer);
-		textLength = charsRead;
+		do{
+			memset(buffer, '\0', sizeof(buffer));
+			charsRead = recv(establishedConnectionFD, buffer, sizeof(buffer)-1, 0); //Obtain the original text
+			if (charsRead < 0) error("ERROR reading from socket");
+			strcat(ciphertext,buffer);
+		}while(strstr(ciphertext,END)==NULL);
+		textLength = charsRead-4;
 		
 		for(i=0;i<textLength;i++){
-			if(ciphertext[i] == 32)
-				ciphertext[i] = 91;
-			plaintext[i] = ciphertext[i] - key[i];
-			if(plaintext[i] < 65)
-				plaintext[i] += 27;
-			if(plaintext[i] == 91)
-				plaintext[i] = 32;
+			int ct = ciphertext[i];
+			int k = key[i];
+			if(ct == 32)
+				ct = 91;
+			if(k == 32)
+				k = 91;
+			k -= 64;
+			if(ct > 91 || ct < 65)
+				error("ERROR invalid input");
+			int dif = ct - k;
+			if(dif < 65)
+				dif += 27;
+			if(dif == 91)
+				dif = 32;
+			plaintext[i] = dif;
 		}
 		
-		charsRead = send(establishedConnectionFD, plaintext, textLength, 0); //Send plaintext back
+		strcat(plaintext,END);
+		charsRead = send(establishedConnectionFD, plaintext, strlen(plaintext), 0); //Send ciphertext back
 		if (charsRead < 0) error("ERROR writing to socket");
 		
 		_exit(0);
