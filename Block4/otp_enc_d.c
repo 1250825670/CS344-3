@@ -44,7 +44,6 @@ int main(int argc, char *argv[]){
 		while((childPID = waitpid(-1,&childExitMethod,WNOHANG)) > 0){}
 	}
 	
-	close(establishedConnectionFD); // Close the existing socket which is connected to the client
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
 }
